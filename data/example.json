@@ -1,0 +1,27 @@
+{
+    "version": 1.0,
+    "secrets": { 
+        "discord_api_key": "", 
+        "youtube_api_key": "" 
+    },
+    "channels": [
+        { "channelId": "", "checkQue": 1, "roleId": "" }
+    ],
+    "liveStreams": [
+        { "channelId": "", "mediaId": "", "roleId": "", "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }
+    ],
+    "checkDataHistory": [
+        { "channelId": "", "mediaId": "", "roleId": "", "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }
+    ],
+    "configOptions": {
+        "logLevel": "info",
+        "timezone": "Amsterdam",
+        "checkIntervalSeconds": 60,
+        "channelCooldownMinutes": 5,
+        "lastCheckSaveLimit": 100,
+
+        "mediaChannelId": "",
+        "premiereChannelId": "",
+        "adminId": ""
+    }
+}
