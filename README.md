@@ -50,14 +50,20 @@ Stretch ideas:
 
 ## Project Structure
 
-src/dev/m3v/
-  Main.java            # Entry point (bot init, scheduler)
-  Discord.java         # Discord API interactions + embed dispatch
-  FromJson.java        # JSON-backed state & config loader/saver
-  EmbedTemplates.java  # Central embed builders
-  Youtube.java         # polling / API integration
-data/
-  data.json            # Active runtime data & secrets
+```txt
+holoBot
+├── data
+│   └── data.json                    # Active runtime data & secrets
+├── lib
+└── src
+    └── dev
+        └── m3v
+            ├── Main.java            # Entry point (bot init, scheduler)
+            ├── Discord.java         # Discord API interactions + embed dispatch
+            ├── FromJson.java        # JSON-backed state & config loader/saver
+            ├── EmbedTemplates.java  # Central embed builders
+            └── Youtube.java         # polling / API integration
+```
 
 ## Configuration
 
