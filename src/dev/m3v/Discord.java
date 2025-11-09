@@ -1,5 +1,6 @@
 package dev.m3v;
 
+import java.util.List;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.*;
@@ -12,6 +13,12 @@ public class Discord {
         String discordApiKey = FromJson.get().getSecrets().getDiscord_api_key();
         jdaClient = JDABuilder.createDefault(discordApiKey).build();
         jdaClient.awaitReady();
+    }
+
+    public static void sendMessage(List<String> ids) {
+        for (String id : ids) {
+            
+        }
     }
 
     public static void streamAnouncement(String mediaId) {

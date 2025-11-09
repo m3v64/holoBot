@@ -35,6 +35,10 @@ public class YoutubeData {
                 .build();
     }
 
+    public static boolean isLoaded() {
+        return youTubeService != null;
+    }
+
     public static List<String> check(String channelId) throws IOException, GeneralSecurityException  {
         if (youTubeService == null) initialize();
 
@@ -58,7 +62,6 @@ public class YoutubeData {
             if (!channelId.equals(checkDataEntry.getChannelId())) continue;
             if (checkDataEntry.getVideoId() != null) seenVideoIds.add(checkDataEntry.getVideoId());
         }
-            System.out.printf("[holoBot] Seen for %s: %d%n", channelId, seenVideoIds.size());
 
         List<String> newVideoIds = new ArrayList<>();
         String pageToken = null;
@@ -194,7 +197,6 @@ public class YoutubeData {
                         playlist.getItems().get(0).getContentDetails().getVideoId() != null) {
                         ids = new ArrayList<>();
                         ids.add(playlist.getItems().get(0).getContentDetails().getVideoId());
-                        System.out.printf("[holoBot] Snapshot: adding latest video for %s since no new IDs were found%n", channelId);
                     }
                 }
             } catch (Exception e) {

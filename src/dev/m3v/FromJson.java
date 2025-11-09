@@ -360,7 +360,7 @@ public class FromJson  {
             this.timezone = timezone;
             this.checkIntervalSeconds = checkIntervalSeconds;
             this.channelCooldownMinutes = channelCooldownMinutes;
-            this.lastCheckSaveLimit = lastCheckSaveLimit;
+            this.lastCheckSaveLimit = lastCheckSaveLimitPerChannel * get().getChannels().size();
             this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel;
             this.mediaChannelId = mediaChannelId;
             this.premiereChannelId = premiereChannelId;
@@ -384,16 +384,12 @@ public class FromJson  {
         public void setChannelCooldownMinutes(int channelCooldownMinutes) { this.channelCooldownMinutes = channelCooldownMinutes; }
 
         public int getLastCheckSaveLimit() { return lastCheckSaveLimit; }
-        public void setLastCheckSaveLimit(int lastCheckSaveLimit) { this.lastCheckSaveLimit = lastCheckSaveLimit; }
 
         public int getLastCheckSaveLimitPerChannel() { return lastCheckSaveLimitPerChannel; }
         public void setLastCheckSaveLimitPerChannel(int lastCheckSaveLimitPerChannel) { this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel; }
 
         public String getMediaChannelId() { return mediaChannelId; }
         public void setMediaChannelId(String mediaChannelId) { this.mediaChannelId = mediaChannelId; }
-
-        public int getcheckDataSaveLimit() { return lastCheckSaveLimit; }
-        public void setcheckDataSaveLimit(int checkDataSaveLimit) { this.lastCheckSaveLimit = checkDataSaveLimit; }
 
         public String getVideoChannelId() { return mediaChannelId; }
         public void setVideoChannelId(String videoChannelId) { this.mediaChannelId = videoChannelId; }
@@ -464,10 +460,12 @@ public class FromJson  {
         FromJson.save();
     }
 
-    public static String getLowestChannelId() {
+    public static String getLowestChannelIdAndUpdateCooldown() {
+        for (Channel channel : get().getChannels()) channel.setCheckCooldown(channel.getCheckCooldown()-1);
         for (Channel channel : get().getChannels()) {
             if (channel.getCheckQueue() == 1 ) {
-                return channel.getChannelId();
+                if (channel.getCheckCooldown() != 0)
+                    return channel.getChannelId();
             }
         }
         return null;

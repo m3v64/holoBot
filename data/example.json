@@ -4,6 +4,16 @@
         "discord_api_key": "", 
         "youtube_api_key": "" 
     },
+    "configOptions": {
+        "timezone": "Europe/Amsterdam",
+        "checkIntervalSeconds": 60,
+        "channelCooldownMinutes": 5,
+        "lastCheckSaveLimitPerChannel": 20,
+
+        "mediaChannelId": "",
+        "premiereChannelId": "",
+        "adminId": ""
+    },
     "channels": [
         { "channelId": "", "checkQue": 1, "checkCooldown": 5, "roleId": "" }
     ],
@@ -12,16 +22,5 @@
     ],
     "checkDataHistory": [
         { "channelId": "", "mediaId": "", "roleId": "", "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }
-    ],
-    "configOptions": {
-        "logLevel": "info",
-        "timezone": "Amsterdam",
-        "checkIntervalSeconds": 60,
-        "channelCooldownMinutes": 5,
-        "lastCheckSaveLimit": 100,
-
-        "mediaChannelId": "",
-        "premiereChannelId": "",
-        "adminId": ""
-    }
+    ]
 }
