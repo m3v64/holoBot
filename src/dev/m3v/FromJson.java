@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
  
 
 public class FromJson  {
@@ -48,21 +49,75 @@ public class FromJson  {
     public List<Channel> getChannels() { return channels; }
 
     public Channel getChannels(String channelId) {
-        if (channels == null) return new Channel(channelId, 0, "");
+        if (channels == null) return new Channel(channelId, 0, 0, "");
         return channels.stream()
-                .filter(c -> c.getChannelId() != null && c.getChannelId().equals(channelId))
+                .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
                 .findFirst()
-                .orElse(new Channel(channelId, 0, ""));
+                .orElse(new Channel(channelId, 0, 0, ""));
     }
     public void setChannels(List<Channel> channels) { this.channels = channels; }
+
+    public Channel setChannels(String channelId, Channel channelData) {
+        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (this.channels == null) this.channels = new ArrayList<>();
+
+        Channel existing = this.channels.stream()
+                .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
+                .findFirst()
+                .orElse(null);
+
+        if (existing != null) {
+            if (channelData != null) {
+                existing.setCheckQueue(channelData.getCheckQueue());
+                existing.setCheckCooldown(channelData.getCheckCooldown());
+                existing.setRoleId(channelData.getRoleId());
+            }
+            return existing;
+        }
+
+    Channel toAdd = (channelData == null)
+        ? new Channel(channelId, 0, 0, "")
+    : new Channel(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
+    toAdd.setCheckCooldown(channelData == null ? 0 : channelData.getCheckCooldown());
+        this.channels.add(toAdd);
+        return toAdd;
+    }
+
+    public Channel setChannels(String channelId) { return setChannels(channelId, null); }
 
     public List<CheckData> getCheckDataHistory() { return checkDataHistory; }
     public void setCheckDataHistory(List<CheckData> checkDataHistory) { this.checkDataHistory = checkDataHistory; }
 
+    public CheckData setCheckDataHistory(String channelId, CheckData data) {
+        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (this.checkDataHistory == null) this.checkDataHistory = new ArrayList<>();
+
+        CheckData existing = this.checkDataHistory.stream()
+                .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
+                .findFirst()
+                .orElse(null);
+
+        if (existing != null) {
+            if (data != null) {
+                existing.setMediaId(data.getMediaId());
+                existing.setRoleId(data.getRoleId());
+                existing.setData(data.getData());
+            }
+            return existing;
+        }
+
+        CheckData toAdd = (data == null)
+                ? new CheckData(channelId, "", "")
+                : new CheckData(channelId, data.getMediaId(), data.getRoleId());
+        if (data != null) toAdd.setData(data.getData());
+        this.checkDataHistory.add(toAdd);
+        return toAdd;
+    }
+
     public CheckData getCheckDataHistory(String channelId) {
         if (checkDataHistory == null) return new CheckData(channelId, "", "");
         return checkDataHistory.stream()
-                .filter(c -> c.getChannelId() != null && c.getChannelId().equals(channelId))
+                .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
                 .findFirst()
                 .orElse(new CheckData(channelId, "", ""));
     }
@@ -71,8 +126,36 @@ public class FromJson  {
     public void setCheckData(List<CheckData> checkData) { this.checkDataHistory = checkData; }
     public CheckData getCheckData(String channelId) { return getCheckDataHistory(channelId); }
 
+    public CheckData setCheckData(String channelId, CheckData data) { return setCheckDataHistory(channelId, data); }
+
     public List<LiveStream> getLiveStreams() { return liveStreams; }
     public void setLiveStreams(List<LiveStream> liveStreams) { this.liveStreams = liveStreams; }
+
+    public LiveStream setLiveStreams(String channelId, LiveStream stream) {
+        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (this.liveStreams == null) this.liveStreams = new ArrayList<>();
+
+        LiveStream existing = this.liveStreams.stream()
+                .filter(l -> l.getChannelId() != null && l.getChannelId().equals(channelId))
+                .findFirst()
+                .orElse(null);
+
+        if (existing != null) {
+            if (stream != null) {
+                existing.setMediaId(stream.getMediaId());
+                existing.setRoleId(stream.getRoleId());
+                existing.setData(stream.getData());
+            }
+            return existing;
+        }
+
+        LiveStream toAdd = (stream == null)
+                ? new LiveStream(channelId, "", "")
+                : new LiveStream(channelId, stream.getMediaId(), stream.getRoleId());
+        if (stream != null) toAdd.setData(stream.getData());
+        this.liveStreams.add(toAdd);
+        return toAdd;
+    }
 
     public LiveStream getLiveStreams(String channelId) {
         if (liveStreams == null) return new LiveStream(channelId, "", "");
@@ -105,36 +188,43 @@ public class FromJson  {
 
     public static class Channel {
         private String channelId;
-        private int checkQue;
+        @SerializedName("checkQue")
+        private int checkQueue; // clarified name while preserving JSON field mapping
+        private int checkCooldown;
         private String roleId;
 
-        public Channel(String channelId) {
+    public Channel(String channelId) {
             if (!FromJson.isLoaded()) {
                 throw new IllegalStateException("FromJson is not loaded. Call FromJson.load() before creating Channel instances.");
             }
 
             Channel match = FromJson.get().getChannels()
                     .stream()
-                    .filter(c -> c.getChannelId() != null && c.getChannelId().equals(channelId))
+                    .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Channel ID not found: " + channelId));
 
             this.channelId = match.getChannelId();
-            this.checkQue = match.getCheckQue();
+            this.checkQueue = match.getCheckQueue();
+            this.checkCooldown = match.getCheckCooldown();
             this.roleId = match.getRoleId();
         }
 
-        public Channel(String channelId, int checkQue, String roleId) {
+        public Channel(String channelId, int checkQueue, int checkCooldown, String roleId) {
             this.channelId = channelId;
-            this.checkQue = checkQue;
+            this.checkQueue = checkQueue;
+            this.checkCooldown = checkCooldown;
             this.roleId = roleId;
         }
 
         public String getChannelId() { return channelId; }
         public void setChannelId(String channelId) { this.channelId = channelId; }
 
-        public int getCheckQue() { return checkQue; }
-        public void setCheckQue(int checkQue) { this.checkQue = checkQue; }
+    public int getCheckQueue() { return checkQueue; }
+    public void setCheckQueue(int checkQueue) { this.checkQueue = checkQueue; }
+
+        public int getCheckCooldown() { return checkCooldown; }
+        public void setCheckCooldown(int checkCooldown) { this.checkCooldown = checkCooldown; }
 
         public String getRoleId() { return roleId; }
         public void setRoleId(String roleId) { this.roleId = roleId; }
@@ -201,7 +291,8 @@ public class FromJson  {
 
     public static class Data {
         private String channelName;
-        private String channelurl;
+        @SerializedName("channelurl")
+        private String channelUrl; // renamed from channelurl for clarity while preserving JSON mapping
         private String title;
         private String description;
         private String mediaUrl;
@@ -218,8 +309,8 @@ public class FromJson  {
         public String getChannelName() { return channelName; }
         public void setChannelName(String channelName) { this.channelName = channelName; }
 
-        public String getChannelurl() { return channelurl; }
-        public void setChannelurl(String channelurl) { this.channelurl = channelurl; }
+    public String getChannelUrl() { return channelUrl; }
+    public void setChannelUrl(String channelUrl) { this.channelUrl = channelUrl; }
 
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
@@ -258,20 +349,26 @@ public class FromJson  {
         private int checkIntervalSeconds;
         private int channelCooldownMinutes;
         private int lastCheckSaveLimit;
+        private int lastCheckSaveLimitPerChannel;
         private String mediaChannelId;
         private String premiereChannelId;
         private String adminId;
 
         public ConfigOptions() {}
-        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, String mediaChannelId, String premiereChannelId, String adminId) {
+        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, int lastCheckSaveLimitPerChannel, String mediaChannelId, String premiereChannelId, String adminId) {
             this.logLevel = logLevel;
             this.timezone = timezone;
             this.checkIntervalSeconds = checkIntervalSeconds;
             this.channelCooldownMinutes = channelCooldownMinutes;
             this.lastCheckSaveLimit = lastCheckSaveLimit;
+            this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel;
             this.mediaChannelId = mediaChannelId;
             this.premiereChannelId = premiereChannelId;
             this.adminId = adminId;
+        }
+
+        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, String mediaChannelId, String premiereChannelId, String adminId) {
+            this(logLevel, timezone, checkIntervalSeconds, channelCooldownMinutes, lastCheckSaveLimit, 0, mediaChannelId, premiereChannelId, adminId);
         }
 
         public String getLogLevel() { return logLevel; }
@@ -288,6 +385,9 @@ public class FromJson  {
 
         public int getLastCheckSaveLimit() { return lastCheckSaveLimit; }
         public void setLastCheckSaveLimit(int lastCheckSaveLimit) { this.lastCheckSaveLimit = lastCheckSaveLimit; }
+
+        public int getLastCheckSaveLimitPerChannel() { return lastCheckSaveLimitPerChannel; }
+        public void setLastCheckSaveLimitPerChannel(int lastCheckSaveLimitPerChannel) { this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel; }
 
         public String getMediaChannelId() { return mediaChannelId; }
         public void setMediaChannelId(String mediaChannelId) { this.mediaChannelId = mediaChannelId; }
@@ -333,5 +433,43 @@ public class FromJson  {
             e.printStackTrace();
             Discord.sendError("Saving Json data", e.getMessage());
         }
+    }
+
+    public static void updateQue() {
+        List<Channel> channels = get().getChannels();
+        if (channels == null || channels.isEmpty()) return;
+
+        int size = channels.size();
+        boolean bumped = false;
+        for (Channel channel : channels) {
+            if (channel.getCheckQueue() == 1) {
+                channel.setCheckQueue(size + 1);
+                bumped = true;
+                break;
+            }
+        }
+
+        if (!bumped) {
+            Channel min = null;
+            for (Channel channel : channels) {
+                if (min == null || channel.getCheckQueue() < min.getCheckQueue()) min = channel;
+            }
+            if (min != null) min.setCheckQueue(size + 1);
+        }
+
+        for (Channel channel : channels) {
+            channel.setCheckQueue(channel.getCheckQueue() - 1);
+        }
+
+        FromJson.save();
+    }
+
+    public static String getLowestChannelId() {
+        for (Channel channel : get().getChannels()) {
+            if (channel.getCheckQueue() == 1 ) {
+                return channel.getChannelId();
+            }
+        }
+        return null;
     }
 }

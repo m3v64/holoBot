@@ -5,7 +5,7 @@
         "youtube_api_key": "" 
     },
     "channels": [
-        { "channelId": "", "checkQue": 1, "roleId": "" }
+        { "channelId": "", "checkQue": 1, "checkCooldown": 5, "roleId": "" }
     ],
     "liveStreams": [
         { "channelId": "", "mediaId": "", "roleId": "", "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }

@@ -1,22 +1,42 @@
 package dev.m3v;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         try {
             FromJson.load();
-            Discord.initiateBot();
+            // Discord.initiateBot();
+            YoutubeData.initialize();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to initialize holoBot. Exiting.");
             System.exit(1);
         }
 
-        // Discord.streamAnouncement();
-        Thread.sleep(6000);
-        System.exit(0);
-
+        List<String> newVideoIds = new ArrayList<>();
+        try {
+            String lowestId = FromJson.getLowestChannelId();
+            System.out.println("[holoBot] Starting YouTube check...");
+            newVideoIds = YoutubeData.check(lowestId);
+            System.out.printf("[holoBot] Channel chosen: %s%n", lowestId);
+            System.out.printf("[holoBot] New video IDs fetched: %d%n", newVideoIds.size());
+            if (!newVideoIds.isEmpty()) {
+                System.out.println("[holoBot] Sample IDs: " + newVideoIds.subList(0, Math.min(5, newVideoIds.size())));
+            }
+            YoutubeData.saveVideos(newVideoIds, lowestId);
+            FromJson.updateQue();
+            System.out.printf("[holoBot] New video IDs saved to json, currently saved: %s/100%n", (FromJson.get().getCheckData().size()));
+            System.out.println("[holoBot] Save complete. Exiting.");
+        } catch (Throwable e) {
+            System.err.println("[holoBot] ERROR during test run: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
     //     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     //     Runnable checkYouTubeTask = () -> {

@@ -6,59 +6,58 @@ import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class Discord {
-    private static JDA api;
+    private static JDA jdaClient;
 
     public static void initiateBot() throws LoginException, InterruptedException {
         String discordApiKey = FromJson.get().getSecrets().getDiscord_api_key();
-        api = JDABuilder.createDefault(discordApiKey).build();
-        api.awaitReady();
+        jdaClient = JDABuilder.createDefault(discordApiKey).build();
+        jdaClient.awaitReady();
     }
 
     public static void streamAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
-        MessageChannel channel = api.getTextChannelById(discordChannelId);
+        MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) {
             return;
         }
+        FromJson.Data streamData = null;
 
-        FromJson.Data d = null;
-
-        var streams = FromJson.get().getLiveStreams();
-        if (streams != null) {
-            for (FromJson.LiveStream s : streams) {
-                if (mediaId.equals(s.getMediaId())) {
-                    d = s.getData();
+        var liveStreamsList = FromJson.get().getLiveStreams();
+        if (liveStreamsList != null) {
+            for (FromJson.LiveStream stream : liveStreamsList) {
+                if (mediaId.equals(stream.getMediaId())) {
+                    streamData = stream.getData();
                     break;
                 }
             }
         }
 
-        if (d == null) {
-            var checks = FromJson.get().getCheckDataHistory();
-            if (checks != null) {
-                for (FromJson.CheckData c : checks) {
-                    if (mediaId.equals(c.getMediaId())) {
-                        d = c.getData();
+        if (streamData == null) {
+            var checkHistoryList = FromJson.get().getCheckDataHistory();
+            if (checkHistoryList != null) {
+                for (FromJson.CheckData check : checkHistoryList) {
+                    if (mediaId.equals(check.getMediaId())) {
+                        streamData = check.getData();
                         break;
                     }
                 }
             }
         }
 
-        if (d == null) return;
+        if (streamData == null) return;
 
         EmbedBuilder streamEndEmbed = EmbedTemplates.createEndedStreamEmbed(
-            d.getChannelName(),
-            d.getChannelurl(),
-            d.getTitle(),
-            d.getMediaUrl(),
-            d.getThumbnailUrl(),
-            d.getDuration(),
-            d.getAvgViewers(),
-            d.getPeakViewers(),
-            d.getEndTime()
+            streamData.getChannelName(),
+            streamData.getChannelUrl(),
+            streamData.getTitle(),
+            streamData.getMediaUrl(),
+            streamData.getThumbnailUrl(),
+            streamData.getDuration(),
+            streamData.getAvgViewers(),
+            streamData.getPeakViewers(),
+            streamData.getEndTime()
         );
 
         String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
@@ -72,45 +71,44 @@ public class Discord {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
-        MessageChannel channel = api.getTextChannelById(discordChannelId);
+        MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
+        FromJson.Data streamData = null;
 
-        FromJson.Data d = null;
-
-        var streams = FromJson.get().getLiveStreams();
-        if (streams != null) {
-            for (FromJson.LiveStream s : streams) {
-                if (mediaId.equals(s.getMediaId())) {
-                    d = s.getData();
+        var liveStreamsList = FromJson.get().getLiveStreams();
+        if (liveStreamsList != null) {
+            for (FromJson.LiveStream stream : liveStreamsList) {
+                if (mediaId.equals(stream.getMediaId())) {
+                    streamData = stream.getData();
                     break;
                 }
             }
         }
 
-        if (d == null) {
-            var checks = FromJson.get().getCheckDataHistory();
-            if (checks != null) {
-                for (FromJson.CheckData c : checks) {
-                    if (mediaId.equals(c.getMediaId())) {
-                        d = c.getData();
+        if (streamData == null) {
+            var checkHistoryList = FromJson.get().getCheckDataHistory();
+            if (checkHistoryList != null) {
+                for (FromJson.CheckData check : checkHistoryList) {
+                    if (mediaId.equals(check.getMediaId())) {
+                        streamData = check.getData();
                         break;
                     }
                 }
             }
         }
 
-        if (d == null) return;
+        if (streamData == null) return;
 
         EmbedBuilder liveEmbed = EmbedTemplates.createLiveEmbed(
-            d.getChannelName(),
-            d.getChannelurl(),
-            d.getTitle(),
-            d.getDescription(),
-            d.getMediaUrl(),
-            d.getThumbnailUrl(),
-            d.getAvgViewers(),
-            d.getPeakViewers(),
-            d.getStartTime()
+            streamData.getChannelName(),
+            streamData.getChannelUrl(),
+            streamData.getTitle(),
+            streamData.getDescription(),
+            streamData.getMediaUrl(),
+            streamData.getThumbnailUrl(),
+            streamData.getAvgViewers(),
+            streamData.getPeakViewers(),
+            streamData.getStartTime()
         );
 
         String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
@@ -120,48 +118,79 @@ public class Discord {
         channel.sendMessageEmbeds(liveEmbed.build()).queue();
     }
 
-    public static void videoAnouncement(String mediaId) {
+    public static void primierAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
-        MessageChannel channel = api.getTextChannelById(discordChannelId);
+        MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
+        FromJson.Data streamData = null;
 
-        FromJson.Data d = null;
-
-        var checks = FromJson.get().getCheckDataHistory();
-        if (checks != null) {
-            for (FromJson.CheckData c : checks) {
-                if (mediaId.equals(c.getMediaId())) {
-                    d = c.getData();
+        var checkHistoryList = FromJson.get().getCheckDataHistory();
+        if (checkHistoryList != null) {
+            for (FromJson.CheckData check : checkHistoryList) {
+                if (mediaId.equals(check.getMediaId())) {
+                    streamData = check.getData();
                     break;
                 }
             }
         }
 
-        if (d == null) {
-            var streams = FromJson.get().getLiveStreams();
-            if (streams != null) {
-                for (FromJson.LiveStream s : streams) {
-                    if (mediaId.equals(s.getMediaId())) {
-                        d = s.getData();
+        if (streamData == null) return;
+
+        EmbedBuilder premierEmbed = EmbedTemplates.createPremierEmbed(
+            streamData.getChannelName(),
+            streamData.getChannelUrl(),
+            streamData.getTitle(),
+            streamData.getMediaUrl(),
+            streamData.getThumbnailUrl(),
+            streamData.getStartTime()
+        );
+
+        channel.sendMessageEmbeds(premierEmbed.build()).queue();
+    }
+
+    public static void videoAnouncement(String mediaId) {
+        if (mediaId == null || mediaId.isBlank()) return;
+
+        String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
+        if (channel == null) return;
+        FromJson.Data streamData = null;
+
+        var checkHistoryList = FromJson.get().getCheckDataHistory();
+        if (checkHistoryList != null) {
+            for (FromJson.CheckData check : checkHistoryList) {
+                if (mediaId.equals(check.getMediaId())) {
+                    streamData = check.getData();
+                    break;
+                }
+            }
+        }
+
+        if (streamData == null) {
+            var liveStreamsList = FromJson.get().getLiveStreams();
+            if (liveStreamsList != null) {
+                for (FromJson.LiveStream stream : liveStreamsList) {
+                    if (mediaId.equals(stream.getMediaId())) {
+                        streamData = stream.getData();
                         break;
                     }
                 }
             }
         }
 
-        if (d == null) return;
+        if (streamData == null) return;
 
         EmbedBuilder videoEmbed = EmbedTemplates.createVideoEmbed(
-            d.getChannelName(),
-            d.getChannelurl(),
-            d.getTitle(),
-            d.getMediaUrl(),
-            d.getThumbnailUrl(),
-            d.getDuration(),
-            d.getViews(),
-            d.getEndTime()
+            streamData.getChannelName(),
+            streamData.getChannelUrl(),
+            streamData.getTitle(),
+            streamData.getMediaUrl(),
+            streamData.getThumbnailUrl(),
+            streamData.getDuration(),
+            streamData.getViews(),
+            streamData.getEndTime()
         );
 
         String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
@@ -175,7 +204,7 @@ public class Discord {
         EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, errorMessage);
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
         String adminId = FromJson.get().getConfigOptions().getAdminId();
-        MessageChannel channel = api.getTextChannelById(discordChannelId);
+    MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
 
         if (channel == null) return;
 
