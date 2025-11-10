@@ -13,6 +13,7 @@ public class Update {
             if (lowestId == null) return;
             newVideoIds = YoutubeData.check(lowestId);
 
+            Discord.sendMessage(newVideoIds);
             YoutubeData.saveVideos(newVideoIds, lowestId);
             FromJson.updateQue();
         } catch (Exception e) {

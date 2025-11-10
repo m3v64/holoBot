@@ -7,7 +7,7 @@ public class Main {
         System.out.println("Starting holoBot...");
         try {
             FromJson.load();
-            // Discord.initiateBot();
+            Discord.initiateBot();
             YoutubeData.initialize();
         } catch (Exception e) {
             e.printStackTrace();

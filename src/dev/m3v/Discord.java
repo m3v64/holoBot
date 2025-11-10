@@ -16,12 +16,39 @@ public class Discord {
     }
 
     public static void sendMessage(List<String> ids) {
-        for (String id : ids) {
-            
+        if (ids == null || ids.isEmpty()) return;
+        for (String mediaId : ids) {
+            if (mediaId == null || mediaId.isBlank()) continue;
+
+            FromJson.CheckData checkData = null;
+            if (FromJson.get().getCheckDataHistory() != null) {
+                checkData = FromJson.get().getCheckDataHistory().stream()
+                        .filter(cd -> cd != null && mediaId.equals(cd.getMediaId()))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            FromJson.LiveStream liveStream = null;
+            if (FromJson.get().getLiveStreams() != null) {
+                liveStream = FromJson.get().getLiveStreams().stream()
+                        .filter(ls -> ls != null && mediaId.equals(ls.getMediaId()))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (checkData != null) {
+                if (checkData.getIsVod()) {
+                    vodAnouncement(mediaId);
+                } else {
+                    videoAnouncement(mediaId);
+                }
+            } else if (liveStream != null) {
+                liveAnouncement(mediaId);
+            }
         }
     }
 
-    public static void streamAnouncement(String mediaId) {
+    public static void vodAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();

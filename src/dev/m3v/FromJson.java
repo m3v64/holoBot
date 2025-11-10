@@ -235,6 +235,7 @@ public class FromJson  {
         private String channelId;
         private String mediaId;
         private String roleId;
+        private boolean isVod;
         private Data data;
 
         public CheckData() {}
@@ -242,6 +243,14 @@ public class FromJson  {
             this.channelId = channelId;
             this.mediaId = mediaId;
             this.roleId = roleId;
+            this.isVod = false;
+        }
+
+        public CheckData(String channelId, String mediaId, String roleId, boolean isVod) {
+            this.channelId = channelId;
+            this.mediaId = mediaId;
+            this.roleId = roleId;
+            this.isVod = isVod;
         }
 
         public String getChannelId() { return channelId; }
@@ -252,6 +261,8 @@ public class FromJson  {
 
         public String getRoleId() { return roleId; }
         public void setRoleId(String roleId) { this.roleId = roleId; }
+
+        public boolean getIsVod() { return isVod; }
 
         public Data getData() { return data; }
         public void setData(Data data) { this.data = data; }
@@ -455,6 +466,7 @@ public class FromJson  {
 
         for (Channel channel : channels) {
             channel.setCheckQueue(channel.getCheckQueue() - 1);
+            channel.setCheckCooldown(get().getConfigOptions().getChannelCooldownMinutes());
         }
 
         FromJson.save();

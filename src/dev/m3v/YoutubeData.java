@@ -217,6 +217,8 @@ public class YoutubeData {
             String videoId = video.getId();
             String liveFlag = video.getSnippet() == null ? "none" : video.getSnippet().getLiveBroadcastContent();
             boolean isLiveLike = "live".equalsIgnoreCase(liveFlag);
+            boolean hasEnded = video.getLiveStreamingDetails() != null && video.getLiveStreamingDetails().getActualEndTime() != null;
+            boolean isVod = ("none".equalsIgnoreCase(liveFlag)) || (hasEnded && !isLiveLike);
 
             if (isLiveLike) {
                 List<FromJson.LiveStream> liveStreams = jsonData.getLiveStreams();
@@ -241,7 +243,7 @@ public class YoutubeData {
                     }
                 }
                 if (!alreadySaved) {
-                    FromJson.CheckData checkData = new FromJson.CheckData(channelId, videoId, roleId);
+                    FromJson.CheckData checkData = new FromJson.CheckData(channelId, videoId, roleId, isVod);
                     checkData.setData(data);
                     checkHistory.add(0, checkData);
                 }
