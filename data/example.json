@@ -15,12 +15,57 @@
         "adminId": ""
     },
     "channels": [
-        { "channelId": "", "checkQue": 1, "checkCooldown": 5, "roleId": "" }
+        { 
+            "channelId": "", 
+            "checkQue": 1, 
+            "checkCooldown": 5, 
+            "roleId": "" 
+        }
     ],
     "liveStreams": [
-        { "channelId": "", "mediaId": "", "roleId": "", "messageId": "", "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }
+        { 
+            "channelId": "", 
+            "mediaId": "", 
+            "roleId": "", 
+            "messageId": "", 
+            "data": 
+                { 
+                    "channelName": "", 
+                    "channelurl": "", 
+                    "title": "", 
+                    "description": "", 
+                    "mediaUrl": "", 
+                    "thumbnailUrl": "", 
+                    "duration": "", 
+                    "views": 0, 
+                    "avgViewers": 0, 
+                    "peakViewers": 0, 
+                    "startTime": "", 
+                    "endTime": "" 
+                } 
+        }
     ],
     "checkDataHistory": [
-        { "channelId": "", "mediaId": "", "roleId": "", "isVod": true, "data": { "channelName": "", "channelurl": "", "title": "", "description": "", "mediaUrl": "", "thumbnailUrl": "", "duration": "", "views": 0, "avgViewers": 0, "peakViewers": 0, "startTime": "", "endTime": "" } }
+        { 
+            "channelId": "", 
+            "mediaId": "", 
+            "roleId": "", 
+            "isVod": true, 
+            "data": 
+                { 
+                    "channelName": "", 
+                    "channelurl": "", 
+                    "title": "", 
+                    "description": "", 
+                    "mediaUrl": "", 
+                    "thumbnailUrl": "", 
+                    "duration": "", 
+                    "views": 0, 
+                    "avgViewers": 0, 
+                    "peakViewers": 0, 
+                    "startTime": "", 
+                    "endTime": "" 
+                } 
+        }
     ]
 }
