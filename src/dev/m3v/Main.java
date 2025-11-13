@@ -18,7 +18,7 @@ public class Main {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
         Runnable checkYouTubeTask = () -> {
-            Update.run();
+            Update.check();
         };
 
         scheduler.scheduleAtFixedRate(checkYouTubeTask, 0, 60, TimeUnit.SECONDS);

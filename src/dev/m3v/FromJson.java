@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
  
 
 public class FromJson  {
@@ -77,7 +76,7 @@ public class FromJson  {
 
     Channel toAdd = (channelData == null)
         ? new Channel(channelId, 0, 0, "")
-    : new Channel(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
+        : new Channel(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
     toAdd.setCheckCooldown(channelData == null ? 0 : channelData.getCheckCooldown());
         this.channels.add(toAdd);
         return toAdd;
@@ -101,15 +100,23 @@ public class FromJson  {
             if (data != null) {
                 existing.setMediaId(data.getMediaId());
                 existing.setRoleId(data.getRoleId());
+                existing.setMessageId(data.getMessageId());
+                existing.setIsPremier(data.getIsPremier());
+                existing.setIsVod(data.getIsVod());
                 existing.setData(data.getData());
             }
             return existing;
         }
 
-        CheckData toAdd = (data == null)
-                ? new CheckData(channelId, "", "")
-                : new CheckData(channelId, data.getMediaId(), data.getRoleId());
-        if (data != null) toAdd.setData(data.getData());
+    CheckData toAdd = (data == null)
+        ? new CheckData(channelId, "", "")
+        : new CheckData(channelId, data.getMediaId(), data.getRoleId());
+    if (data != null) {
+        toAdd.setMessageId(data.getMessageId());
+        toAdd.setIsPremier(data.getIsPremier());
+        toAdd.setIsVod(data.getIsVod());
+        toAdd.setData(data.getData());
+    }
         this.checkDataHistory.add(toAdd);
         return toAdd;
     }
@@ -144,15 +151,23 @@ public class FromJson  {
             if (stream != null) {
                 existing.setMediaId(stream.getMediaId());
                 existing.setRoleId(stream.getRoleId());
+                existing.setMessageId(stream.getMessageId());
+                existing.setIsPremier(stream.getIsPremier());
+                existing.setIsVod(stream.getIsVod());
                 existing.setData(stream.getData());
             }
             return existing;
         }
 
-        LiveStream toAdd = (stream == null)
-                ? new LiveStream(channelId, "", "")
-                : new LiveStream(channelId, stream.getMediaId(), stream.getRoleId());
-        if (stream != null) toAdd.setData(stream.getData());
+    LiveStream toAdd = (stream == null)
+        ? new LiveStream(channelId, "", "")
+        : new LiveStream(channelId, stream.getMediaId(), stream.getRoleId());
+    if (stream != null) {
+        toAdd.setMessageId(stream.getMessageId());
+        toAdd.setIsPremier(stream.getIsPremier());
+        toAdd.setIsVod(stream.getIsVod());
+        toAdd.setData(stream.getData());
+    }
         this.liveStreams.add(toAdd);
         return toAdd;
     }
@@ -188,8 +203,7 @@ public class FromJson  {
 
     public static class Channel {
         private String channelId;
-        @SerializedName("checkQue")
-        private int checkQueue; // clarified name while preserving JSON field mapping
+        private int checkQue;
         private int checkCooldown;
         private String roleId;
 
@@ -205,14 +219,14 @@ public class FromJson  {
                     .orElseThrow(() -> new IllegalArgumentException("Channel ID not found: " + channelId));
 
             this.channelId = match.getChannelId();
-            this.checkQueue = match.getCheckQueue();
+            this.checkQue = match.getCheckQueue();
             this.checkCooldown = match.getCheckCooldown();
             this.roleId = match.getRoleId();
         }
 
         public Channel(String channelId, int checkQueue, int checkCooldown, String roleId) {
             this.channelId = channelId;
-            this.checkQueue = checkQueue;
+            this.checkQue = checkQueue;
             this.checkCooldown = checkCooldown;
             this.roleId = roleId;
         }
@@ -220,8 +234,8 @@ public class FromJson  {
         public String getChannelId() { return channelId; }
         public void setChannelId(String channelId) { this.channelId = channelId; }
 
-    public int getCheckQueue() { return checkQueue; }
-    public void setCheckQueue(int checkQueue) { this.checkQueue = checkQueue; }
+        public int getCheckQueue() { return checkQue; }
+        public void setCheckQueue(int checkQueue) { this.checkQue = checkQueue; }
 
         public int getCheckCooldown() { return checkCooldown; }
         public void setCheckCooldown(int checkCooldown) { this.checkCooldown = checkCooldown; }
@@ -235,6 +249,8 @@ public class FromJson  {
         private String channelId;
         private String mediaId;
         private String roleId;
+        private String messageId;
+        private boolean isPremier;
         private boolean isVod;
         private Data data;
 
@@ -262,7 +278,14 @@ public class FromJson  {
         public String getRoleId() { return roleId; }
         public void setRoleId(String roleId) { this.roleId = roleId; }
 
+        public String getMessageId() { return messageId; }
+        public void setMessageId(String messageId) { this.messageId = messageId; }
+
+        public boolean getIsPremier() { return isPremier; }
+        public void setIsPremier(boolean isPremier) { this.isPremier = isPremier; }
+
         public boolean getIsVod() { return isVod; }
+        public void setIsVod(boolean isVod) { this.isVod = isVod; }
 
         public Data getData() { return data; }
         public void setData(Data data) { this.data = data; }
@@ -275,6 +298,9 @@ public class FromJson  {
         private String channelId;
         private String mediaId;
         private String roleId;
+        private String messageId;
+        private boolean isPremier;
+        private boolean isVod;
         private Data data;
 
         public LiveStream() {}
@@ -293,6 +319,15 @@ public class FromJson  {
         public String getRoleId() { return roleId; }
         public void setRoleId(String roleId) { this.roleId = roleId; }
 
+        public String getMessageId() { return messageId; }
+        public void setMessageId(String messageId) { this.messageId = messageId; }
+
+        public boolean getIsPremier() { return isPremier; }
+        public void setIsPremier(boolean isPremier) { this.isPremier = isPremier; }
+
+        public boolean getIsVod() { return isVod; }
+        public void setIsVod(boolean isVod) { this.isVod = isVod; }
+
         public Data getData() { return data; }
         public void setData(Data data) { this.data = data; }
 
@@ -302,8 +337,7 @@ public class FromJson  {
 
     public static class Data {
         private String channelName;
-        @SerializedName("channelurl")
-        private String channelUrl; // renamed from channelurl for clarity while preserving JSON mapping
+        private String channelUrl;
         private String title;
         private String description;
         private String mediaUrl;
@@ -320,8 +354,8 @@ public class FromJson  {
         public String getChannelName() { return channelName; }
         public void setChannelName(String channelName) { this.channelName = channelName; }
 
-    public String getChannelUrl() { return channelUrl; }
-    public void setChannelUrl(String channelUrl) { this.channelUrl = channelUrl; }
+        public String getChannelUrl() { return channelUrl; }
+        public void setChannelUrl(String channelUrl) { this.channelUrl = channelUrl; }
 
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }

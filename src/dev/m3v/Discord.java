@@ -15,6 +15,10 @@ public class Discord {
         jdaClient.awaitReady();
     }
 
+    public static boolean isLoaded() {
+        return jdaClient != null;
+    }
+
     public static void sendMessage(List<String> ids) {
         if (ids == null || ids.isEmpty()) return;
         for (String mediaId : ids) {
@@ -98,7 +102,10 @@ public class Discord {
         if (roleId != null && !roleId.isBlank()) {
             channel.sendMessage(String.format("<@&%s>", roleId)).queue();
         }
-        channel.sendMessageEmbeds(streamEndEmbed.build()).queue();
+        channel.sendMessageEmbeds(streamEndEmbed.build()).queue(
+            message -> saveMessageId(mediaId, message.getId()),
+            error -> sendError("vodAnouncement: saving message id", error.getMessage())
+        );
     }
 
     public static void liveAnouncement(String mediaId) {
@@ -149,7 +156,10 @@ public class Discord {
         if (roleId != null && !roleId.isBlank()) {
             channel.sendMessage(String.format("<@&%s>", roleId)).queue();
         }
-        channel.sendMessageEmbeds(liveEmbed.build()).queue();
+        channel.sendMessageEmbeds(liveEmbed.build()).queue(
+            message -> saveMessageId(mediaId, message.getId()),
+            error -> sendError("liveAnouncement: saving message id", error.getMessage())
+        );
     }
 
     public static void primierAnouncement(String mediaId) {
@@ -181,7 +191,10 @@ public class Discord {
             streamData.getStartTime()
         );
 
-        channel.sendMessageEmbeds(premierEmbed.build()).queue();
+        channel.sendMessageEmbeds(premierEmbed.build()).queue(
+            message -> saveMessageId(mediaId, message.getId()),
+            error -> sendError("primierAnouncement: saving message id", error.getMessage())
+        );
     }
 
     public static void videoAnouncement(String mediaId) {
@@ -231,7 +244,10 @@ public class Discord {
         if (roleId != null && !roleId.isBlank()) {
             channel.sendMessage(String.format("<@&%s>", roleId)).queue();
         }
-        channel.sendMessageEmbeds(videoEmbed.build()).queue();
+        channel.sendMessageEmbeds(videoEmbed.build()).queue(
+            message -> saveMessageId(mediaId, message.getId()),
+            error -> sendError("videoAnouncement: saving message id", error.getMessage())
+        );
     }
 
     public static void sendError(String location, String errorMessage) {
@@ -244,5 +260,38 @@ public class Discord {
 
         channel.sendMessage(String.format("<@&%s>", adminId)).queue();
         channel.sendMessageEmbeds(errorEmbed.build()).queue();
+    }
+
+    private static void saveMessageId(String mediaId, String messageId) {
+        if (mediaId == null || messageId == null) return;
+        boolean updated = false;
+
+        List<FromJson.CheckData> checks = FromJson.get().getCheckDataHistory();
+        if (checks != null) {
+            for (FromJson.CheckData cd : checks) {
+                if (cd != null && mediaId.equals(cd.getMediaId())) {
+                    cd.setMessageId(messageId);
+                    updated = true;
+                    break;
+                }
+            }
+        }
+
+        if (!updated) {
+            List<FromJson.LiveStream> lives = FromJson.get().getLiveStreams();
+            if (lives != null) {
+                for (FromJson.LiveStream ls : lives) {
+                    if (ls != null && mediaId.equals(ls.getMediaId())) {
+                        ls.setMessageId(messageId);
+                        updated = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (updated) {
+            FromJson.save();
+        }
     }
 }

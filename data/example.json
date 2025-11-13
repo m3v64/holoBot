@@ -25,13 +25,15 @@
     "liveStreams": [
         { 
             "channelId": "", 
-            "mediaId": "", 
-            "roleId": "", 
-            "messageId": "", 
+            "mediaId": "",
+            "roleId": "",
+            "messageId": "",
+            "isPremier": false,
+            "isVod": false, 
             "data": 
                 { 
                     "channelName": "", 
-                    "channelurl": "", 
+                    "channelUrl": "", 
                     "title": "", 
                     "description": "", 
                     "mediaUrl": "", 
@@ -48,13 +50,15 @@
     "checkDataHistory": [
         { 
             "channelId": "", 
-            "mediaId": "", 
-            "roleId": "", 
+            "mediaId": "",
+            "roleId": "",
+            "messageId": "",
+            "isPremier": false,
             "isVod": true, 
             "data": 
                 { 
                     "channelName": "", 
-                    "channelurl": "", 
+                    "channelUrl": "", 
                     "title": "", 
                     "description": "", 
                     "mediaUrl": "", 

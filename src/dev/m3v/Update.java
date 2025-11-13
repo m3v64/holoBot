@@ -4,8 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Update {
-    public static void run() {
-        if (!FromJson.isLoaded() || !YoutubeData.isLoaded()) return;
+    public static void removePremiers() {
+        
+    }
+
+    public static void updateLive() {
+        
+    }
+
+    public static void check() {
+        if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return;
 
         List<String> newVideoIds = new ArrayList<>();
         try {
