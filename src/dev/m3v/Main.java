@@ -18,7 +18,12 @@ public class Main {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
         Runnable checkYouTubeTask = () -> {
-            Update.check();
+            try {
+                // Update.checkOld();
+                Update.checkNew();
+            } catch (Exception e) {
+                Discord.sendError("Main check task", null, e);
+            }
         };
 
         scheduler.scheduleAtFixedRate(checkYouTubeTask, 0, 60, TimeUnit.SECONDS);

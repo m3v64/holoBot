@@ -461,7 +461,7 @@ public class FromJson  {
                 new ArrayList<>(),
                 new ConfigOptions()
             );
-            Discord.sendError("Loading Json data", e.getMessage());
+            Discord.sendError("Loading Json data", null, e);
         }
     }
 
@@ -472,7 +472,7 @@ public class FromJson  {
             gson.toJson(toWrite, writer);
         } catch (Exception e) {
             e.printStackTrace();
-            Discord.sendError("Saving Json data", e.getMessage());
+            Discord.sendError("Saving Json data", null, e);
         }
     }
 

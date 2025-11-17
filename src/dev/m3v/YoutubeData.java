@@ -200,7 +200,7 @@ public class YoutubeData {
                     }
                 }
             } catch (Exception e) {
-                System.err.println("[holoBot] Snapshot fetch failed: " + e.getMessage());
+                Discord.sendError("[holoBot] Snapshot fetch failed: ", null, e);
             }
             if (ids == null || ids.isEmpty()) return;
         }

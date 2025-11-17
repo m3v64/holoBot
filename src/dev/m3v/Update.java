@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Update {
-    public static void removePremiers() {
-        
+    public static void checkOld() {
+        for (FromJson.LiveStream stream : FromJson.get().getLiveStreams()) {
+            
+        }
     }
 
-    public static void updateLive() {
-        
-    }
-
-    public static void check() {
+    public static void checkNew() {
         if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return;
 
         List<String> newVideoIds = new ArrayList<>();

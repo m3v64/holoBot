@@ -1,5 +1,7 @@
 package dev.m3v;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import javax.security.auth.login.LoginException;
 
@@ -17,6 +19,13 @@ public class Discord {
 
     public static boolean isLoaded() {
         return jdaClient != null;
+    }
+
+    public static void updateMessage(List<FromJson.LiveStream> streams) {
+        if (streams == null || streams.isEmpty()) return;
+        for (FromJson.LiveStream stream : streams) {
+
+        }
     }
 
     public static void sendMessage(List<String> ids) {
@@ -104,7 +113,7 @@ public class Discord {
         }
         channel.sendMessageEmbeds(streamEndEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
-            error -> sendError("vodAnouncement: saving message id", error.getMessage())
+            error -> sendError("vodAnouncement: saving message id", error.getMessage(), null)
         );
     }
 
@@ -156,9 +165,10 @@ public class Discord {
         if (roleId != null && !roleId.isBlank()) {
             channel.sendMessage(String.format("<@&%s>", roleId)).queue();
         }
+
         channel.sendMessageEmbeds(liveEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
-            error -> sendError("liveAnouncement: saving message id", error.getMessage())
+            error -> sendError("liveAnouncement: saving message id", error.getMessage(), null)
         );
     }
 
@@ -193,7 +203,7 @@ public class Discord {
 
         channel.sendMessageEmbeds(premierEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
-            error -> sendError("primierAnouncement: saving message id", error.getMessage())
+            error -> sendError("primierAnouncement: saving message id", error.getMessage(), null)
         );
     }
 
@@ -246,15 +256,23 @@ public class Discord {
         }
         channel.sendMessageEmbeds(videoEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
-            error -> sendError("videoAnouncement: saving message id", error.getMessage())
+            error -> sendError("videoAnouncement: saving message id", error.getMessage(), null)
         );
     }
 
-    public static void sendError(String location, String errorMessage) {
-        EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, errorMessage);
+    public static void sendError(String location, String errorMessage, Throwable t) {
+        String error;
+        if (errorMessage == null) {
+            StringWriter stringWriter = new StringWriter();
+            t.printStackTrace(new PrintWriter(stringWriter));
+            error = stringWriter.toString();
+        } else {
+            error = errorMessage;
+        }
+        EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, error);
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
         String adminId = FromJson.get().getConfigOptions().getAdminId();
-    MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
+        MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
 
         if (channel == null) return;
 
