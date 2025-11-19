@@ -3,6 +3,7 @@ package dev.m3v;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Objects;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.*;
@@ -65,10 +66,8 @@ public class Discord {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
+        if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        if (channel == null) {
-            return;
-        }
         FromJson.Data streamData = null;
 
         var liveStreamsList = FromJson.get().getLiveStreams();
@@ -107,11 +106,10 @@ public class Discord {
             streamData.getEndTime()
         );
 
-        String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
-        if (roleId != null && !roleId.isBlank()) {
-            channel.sendMessage(String.format("<@&%s>", roleId)).queue();
-        }
-        
+        if (channel == null || discordChannelId == null) return;
+        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String mention = "<@&" + roleId + ">";
+        channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(streamEndEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
             error -> sendError("vodAnouncement: saving message id", error.getMessage(), null)
@@ -122,8 +120,8 @@ public class Discord {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
+        if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        if (channel == null) return;
         FromJson.Data streamData = null;
 
         var liveStreamsList = FromJson.get().getLiveStreams();
@@ -162,11 +160,10 @@ public class Discord {
             streamData.getStartTime()
         );
 
-        String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
-        if (roleId != null && !roleId.isBlank()) {
-            channel.sendMessage(String.format("<@&%s>", roleId)).queue();
-        }
-
+        if (channel == null || discordChannelId == null) return;
+        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String mention = "<@&" + roleId + ">";
+        channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(liveEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
             error -> sendError("liveAnouncement: saving message id", error.getMessage(), null)
@@ -177,6 +174,7 @@ public class Discord {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
         FromJson.Data streamData = null;
@@ -212,8 +210,8 @@ public class Discord {
         if (mediaId == null || mediaId.isBlank()) return;
 
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        if (channel == null) return;
         FromJson.Data streamData = null;
 
         var checkHistoryList = FromJson.get().getCheckDataHistory();
@@ -251,10 +249,10 @@ public class Discord {
             streamData.getEndTime()
         );
 
-        String roleId = FromJson.get().getChannels(discordChannelId).getRoleId();
-        if (roleId != null && !roleId.isBlank()) {
-            channel.sendMessage(String.format("<@&%s>", roleId)).queue();
-        }
+        if (channel == null || discordChannelId == null) return;
+        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String mention = "<@&" + roleId + ">";
+        channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(videoEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
             error -> sendError("videoAnouncement: saving message id", error.getMessage(), null)
@@ -272,12 +270,13 @@ public class Discord {
         }
         EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, error);
         String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
-        String adminId = FromJson.get().getConfigOptions().getAdminId();
+        if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-
         if (channel == null) return;
 
-        channel.sendMessage(String.format("<@&%s>", adminId)).queue();
+        String adminId = Objects.requireNonNull(FromJson.get().getConfigOptions().getAdminId(), "roleId must not be null");
+        String mention = "<@&" + adminId + ">";
+        channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(errorEmbed.build()).queue();
     }
 

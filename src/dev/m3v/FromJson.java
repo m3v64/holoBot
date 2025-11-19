@@ -397,10 +397,11 @@ public class FromJson  {
         private int lastCheckSaveLimitPerChannel;
         private String mediaChannelId;
         private String premiereChannelId;
+        private String liveStreamChannelId;
         private String adminId;
 
         public ConfigOptions() {}
-        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, int lastCheckSaveLimitPerChannel, String mediaChannelId, String premiereChannelId, String adminId) {
+        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, int lastCheckSaveLimitPerChannel, String mediaChannelId, String premiereChannelId, String liveStreamChannelId, String adminId) {
             this.logLevel = logLevel;
             this.timezone = timezone;
             this.checkIntervalSeconds = checkIntervalSeconds;
@@ -409,11 +410,12 @@ public class FromJson  {
             this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel;
             this.mediaChannelId = mediaChannelId;
             this.premiereChannelId = premiereChannelId;
+            this.liveStreamChannelId = liveStreamChannelId;
             this.adminId = adminId;
         }
 
-        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, String mediaChannelId, String premiereChannelId, String adminId) {
-            this(logLevel, timezone, checkIntervalSeconds, channelCooldownMinutes, lastCheckSaveLimit, 0, mediaChannelId, premiereChannelId, adminId);
+        public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, String mediaChannelId, String premiereChannelId, String liveStreamChannelId, String adminId) {
+            this(logLevel, timezone, checkIntervalSeconds, channelCooldownMinutes, lastCheckSaveLimit, 0, mediaChannelId, premiereChannelId, liveStreamChannelId, adminId);
         }
 
         public String getLogLevel() { return logLevel; }
@@ -441,6 +443,9 @@ public class FromJson  {
 
         public String getPremiereChannelId() { return premiereChannelId; }
         public void setPremiereChannelId(String premiereChannelId) { this.premiereChannelId = premiereChannelId; }
+
+        public String getLiveStreamChannelId() { return liveStreamChannelId; }
+        public void setLiveStreamChannelId(String liveStreamChannelId) { this.liveStreamChannelId = liveStreamChannelId; }
 
         public String getAdminId() { return adminId; }
         public void setAdminId(String adminId) { this.adminId = adminId; }

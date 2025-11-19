@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class EmbedTemplates {
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
     public static EmbedBuilder createLiveEmbed(String channelName, String channelUrl, String title, String description, String streamUrl, String thumbnailUrl, int averageViewers, int peakViewers, String startTime) {
         EmbedBuilder embed = new EmbedBuilder();
 
@@ -18,11 +20,11 @@ public class EmbedTemplates {
             %s
             """, title, streamUrl, description));
 
-    embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
+        embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
 
         embed.setImage(thumbnailUrl);
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(startTime);
-    embed.setFooter("Live on YouTube since • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(startTime);
+        embed.setFooter("Live on YouTube since • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
         embed.setTimestamp(Instant.now());
 
         return embed;
@@ -38,11 +40,11 @@ public class EmbedTemplates {
             Video available: [%s]
             """, title, streamUrl, duration));
 
-    embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
+        embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
 
         embed.setThumbnail(thumbnailUrl);
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(endTime);
-    embed.setFooter("Stream ended • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(endTime);
+        embed.setFooter("Stream ended • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
         embed.setTimestamp(Instant.now());
 
         return embed;
@@ -61,8 +63,8 @@ public class EmbedTemplates {
         embed.addField("Views", views + "", false);
 
         embed.setImage(thumbnailUrl);
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(endTime);
-    embed.setFooter("Video Released • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(endTime);
+        embed.setFooter("Video Released • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
         embed.setTimestamp(Instant.now());
 
         return embed;
@@ -77,12 +79,15 @@ public class EmbedTemplates {
             ### [%s](%s)
             """, title, videoUrl));
 
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(startTime);
-    long epochSeconds = zonedDateTime.toEpochSecond();
-        embed.addField("Releases in: ", String.format("<t:%s:R>", epochSeconds), false);
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(startTime);
+        long epochSeconds = zonedDateTime.toEpochSecond();
+        if (epochSeconds != 0) ;
+        
+        String rel = Objects.requireNonNull(String.format("<t:%s:R>", epochSeconds));
+        embed.addField("Releases in: ", rel, false);
 
         embed.setImage(thumbnailUrl);
-    embed.setFooter("Video Releases • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
+        embed.setFooter("Video Releases • " + zonedDateTime.format(timeFormat), "https://pingcord.xyz/assets/youtube-footer.png");
         embed.setTimestamp(Instant.now());
 
         return embed;
