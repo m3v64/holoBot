@@ -111,6 +111,7 @@ public class Discord {
         if (roleId != null && !roleId.isBlank()) {
             channel.sendMessage(String.format("<@&%s>", roleId)).queue();
         }
+        
         channel.sendMessageEmbeds(streamEndEmbed.build()).queue(
             message -> saveMessageId(mediaId, message.getId()),
             error -> sendError("vodAnouncement: saving message id", error.getMessage(), null)
