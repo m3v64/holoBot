@@ -19,10 +19,10 @@ public class Main {
 
         Runnable checkYouTubeTask = () -> {
             try {
-                // Update.checkOld();
+                Update.checkOld();
                 Update.checkNew();
             } catch (Exception e) {
-                Discord.sendError("Main check task", null, e);
+                Discord.sendError("Main check task loop", null, e);
             }
         };
 

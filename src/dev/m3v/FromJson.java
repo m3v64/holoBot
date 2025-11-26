@@ -505,20 +505,38 @@ public class FromJson  {
 
         for (Channel channel : channels) {
             channel.setCheckQueue(channel.getCheckQueue() - 1);
-            channel.setCheckCooldown(get().getConfigOptions().getChannelCooldownMinutes());
         }
 
         FromJson.save();
     }
 
-    public static String getLowestChannelIdAndUpdateCooldown() {
-        for (Channel channel : get().getChannels()) channel.setCheckCooldown(channel.getCheckCooldown()-1);
+    public static void updateCooldown() {
+        List<Channel> channels = get().getChannels();
+        if (channels == null || channels.isEmpty()) return;
+
+        for (Channel channel : channels) {
+            int cooldown = channel.getCheckCooldown();
+            if (cooldown > 0) {
+                channel.setCheckCooldown(cooldown - 1);
+            }
+        }
+
+        FromJson.save();
+    }
+
+    public static void updateQueAndCooldownData() {
+        updateQue();
+        updateCooldown();
+    }
+
+    public static String getLowestChannelId() {
         for (Channel channel : get().getChannels()) {
             if (channel.getCheckQueue() == 1 ) {
-                if (channel.getCheckCooldown() != 0)
+                if (channel.getCheckCooldown() == 0)
                     return channel.getChannelId();
             }
         }
+
         return null;
     }
 }

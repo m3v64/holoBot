@@ -150,15 +150,15 @@ public class YoutubeData {
         return data;
     }
 
-    public static List<Video> getVideos(List<String> ids) throws IOException, GeneralSecurityException {
+    public static List<Video> getVideos(List<String> channelIds) throws IOException, GeneralSecurityException {
         if (youTubeService == null) initialize();
-        if (ids == null || ids.isEmpty()) return List.of();
+        if (channelIds == null || channelIds.isEmpty()) return List.of();
 
         List<Video> result = new ArrayList<>();
         int startIndex = 0;
-        while (startIndex < ids.size()) {
-            int endIndex = Math.min(startIndex + 50, ids.size());
-            List<String> batch = ids.subList(startIndex, endIndex);
+        while (startIndex < channelIds.size()) {
+            int endIndex = Math.min(startIndex + 50, channelIds.size());
+            List<String> batch = channelIds.subList(startIndex, endIndex);
             VideoListResponse videoListResponse = youTubeService.videos()
                     .list(Arrays.asList("snippet", "statistics", "contentDetails", "liveStreamingDetails"))
                     .setId(batch)
