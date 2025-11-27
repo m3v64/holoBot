@@ -18,6 +18,7 @@ public class FromJson  {
     private List<CheckData> checkDataHistory;
     private List<LiveStream> liveStreams;
     private ConfigOptions configOptions;
+    private Data data;
 
     public FromJson(double version, Secrets secrets, List<Channel> channels, List<CheckData> checkDataHistory, List<LiveStream> liveStreams, ConfigOptions configOptions) {
         this.version = version;
@@ -183,6 +184,8 @@ public class FromJson  {
     public ConfigOptions getConfigOptions() { return configOptions; }
     public void setConfigOptions(ConfigOptions configOptions) { this.configOptions = configOptions; }
 
+    public Data getData() { return data; }
+    public void setData(Data data) { this.data = data; }
 
     public static class Secrets {
         private String discord_api_key;

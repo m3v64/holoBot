@@ -26,7 +26,7 @@ public class Update {
         try {
             String lowestId = FromJson.getLowestChannelId();
             if (lowestId == null) return;
-            newVideoIds = YoutubeData.check(lowestId);
+            newVideoIds = YoutubeData.check(YoutubeData.getYoutubeData(lowestId), lowestId);
 
             Discord.sendMessage(newVideoIds);
             YoutubeData.saveVideos(newVideoIds, lowestId);

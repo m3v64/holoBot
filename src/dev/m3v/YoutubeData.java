@@ -39,9 +39,7 @@ public class YoutubeData {
         return youTubeService != null;
     }
 
-    public static List<String> check(String channelId) throws IOException, GeneralSecurityException  {
-        if (youTubeService == null) initialize();
-
+    public static ChannelListResponse getYoutubeData(String channelId) throws IOException, GeneralSecurityException {
         ChannelListResponse channelsResponse = youTubeService.channels()
             .list(List.of("contentDetails"))
             .setId(List.of(channelId))
@@ -50,7 +48,16 @@ public class YoutubeData {
             .execute();
         if (channelsResponse.getItems() == null || channelsResponse.getItems().isEmpty())
             throw new RuntimeException("YouTube channels.list returned no items");
+        return channelsResponse;
+    }
 
+    public static List<String> check(ChannelListResponse channelsResponse, String channelId) throws IOException, GeneralSecurityException  {
+        if (youTubeService == null) initialize();
+        if (channelsResponse == null) {
+            Discord.sendError("[holoBot] Failed to get data from youtube, channel data response is null: ", null, null);
+            return null;
+        }
+        
         String uploadsId = channelsResponse.getItems().get(0)
             .getContentDetails()
             .getRelatedPlaylists()
@@ -116,7 +123,7 @@ public class YoutubeData {
     }
 
     private static FromJson.Data toData(Video video) {
-        FromJson.Data data = new FromJson.Data();
+        FromJson.Data data = FromJson.get().getData();
         if (video == null) return data;
         if (video.getSnippet() != null) {
             data.setChannelName(video.getSnippet().getChannelTitle());
