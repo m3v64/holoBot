@@ -22,11 +22,8 @@ public class Discord {
         return jdaClient != null;
     }
 
-    public static void updateMessage(List<FromJson.LiveStream> streams) {
-        if (streams == null || streams.isEmpty()) return;
-        for (FromJson.LiveStream stream : streams) {
+    public static void updateMessage(List<String> streamIds) {
 
-        }
     }
 
     public static void sendMessage(List<String> ids) {

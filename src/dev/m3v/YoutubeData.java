@@ -119,6 +119,7 @@ public class YoutubeData {
         if (!newVideoIds.isEmpty()) {
             newVideoIds.removeIf(seenVideoIds::contains);
         }
+
         return newVideoIds;
     }
 
@@ -157,15 +158,15 @@ public class YoutubeData {
         return data;
     }
 
-    public static List<Video> getVideos(List<String> channelIds) throws IOException, GeneralSecurityException {
+    public static List<Video> getVideos(List<String> videoIds) throws IOException, GeneralSecurityException {
         if (youTubeService == null) initialize();
-        if (channelIds == null || channelIds.isEmpty()) return List.of();
+        if (videoIds == null || videoIds.isEmpty()) return List.of();
 
         List<Video> result = new ArrayList<>();
         int startIndex = 0;
-        while (startIndex < channelIds.size()) {
-            int endIndex = Math.min(startIndex + 50, channelIds.size());
-            List<String> batch = channelIds.subList(startIndex, endIndex);
+        while (startIndex < videoIds.size()) {
+            int endIndex = Math.min(startIndex + 50, videoIds.size());
+            List<String> batch = videoIds.subList(startIndex, endIndex);
             VideoListResponse videoListResponse = youTubeService.videos()
                     .list(Arrays.asList("snippet", "statistics", "contentDetails", "liveStreamingDetails"))
                     .setId(batch)

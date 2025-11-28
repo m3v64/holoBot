@@ -4,36 +4,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Update {
-    public static void checkOld() {
+    public static void update(boolean post) {
         if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return;
 
-        List<String> newVideoIds = new ArrayList<>();
         try {
-            // write method to get just the data from the streams
-            YoutubeData.saveVideos(); // this needs to just save video data to json, or jst write a new method
-
-            Discord.updateMessage(); // finish this method
+            List<String> newVideoIds = checkData();
+            if(post && !newVideoIds.isEmpty()) Discord.sendMessage(newVideoIds);
+            
+            // List<String> StreamIds = checkStreamData();
+            // Discord.updateMessage(); // finish this method
         } catch (Exception e) {
             System.err.println(e);
             return;
         }
     }
 
-    public static void checkNew() {
-        if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return;
-
+    public static List<String> checkData() {
         List<String> newVideoIds = new ArrayList<>();
+        if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return newVideoIds;
+
         try {
             String lowestId = FromJson.getLowestChannelId();
-            if (lowestId == null) return;
+            if (lowestId == null) return newVideoIds;
             newVideoIds = YoutubeData.check(YoutubeData.getYoutubeData(lowestId), lowestId);
-
-            Discord.sendMessage(newVideoIds);
             YoutubeData.saveVideos(newVideoIds, lowestId);
             FromJson.updateQueAndCooldownData();
+            return newVideoIds;
         } catch (Exception e) {
             System.err.println(e);
-            return;
+            return newVideoIds;
         }
+    }
+
+    public static List<String> checkStreamData() {
+        List<String> streamIds = new ArrayList<>();
+        if (!FromJson.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return streamIds;
+
+        try {
+            for (FromJson.Channel channel : FromJson.get().getChannels()) {
+                String channelId = channel.getChannelId();
+                // streamIds = YoutubeData.checkStream(YoutubeData.getYoutubeData(channelId), channelId);
+                YoutubeData.saveVideos(streamIds, channelId);
+                FromJson.updateQueAndCooldownData();
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            return streamIds;
+        }
+        return streamIds;
     }
 }

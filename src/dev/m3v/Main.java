@@ -19,8 +19,7 @@ public class Main {
 
         Runnable checkYouTubeTask = () -> {
             try {
-                Update.checkOld();
-                Update.checkNew();
+                Update.update(true);
             } catch (Exception e) {
                 Discord.sendError("Main check task loop", null, e);
             }
