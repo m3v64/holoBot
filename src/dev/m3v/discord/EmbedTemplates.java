@@ -1,4 +1,4 @@
-package dev.m3v;
+package dev.m3v.discord;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.Color;

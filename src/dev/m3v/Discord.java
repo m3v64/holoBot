@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.security.auth.login.LoginException;
 
+import dev.m3v.discord.EmbedTemplates;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
