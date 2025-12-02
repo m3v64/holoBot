@@ -275,7 +275,7 @@ public class Discord {
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
 
-        String adminId = Objects.requireNonNull(JsonStorage.get().getConfigOptions().getAdminId(), "roleId must not be null");
+        String adminId = Objects.requireNonNull(JsonStorage.get().getConfigOptions().getAdminPingId(), "roleId must not be null");
         String mention = "<@&" + adminId + ">";
         channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(errorEmbed.build()).queue();

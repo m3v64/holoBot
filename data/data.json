@@ -13,7 +13,8 @@
         "mediaChannelId": "",
         "premiereChannelId": "",
         "liveStreamChannelId": "",
-        "adminId": ""
+        "modChannelId": "",
+        "adminPingId": ""
     },
     "channels": [
         { 
