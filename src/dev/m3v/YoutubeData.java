@@ -18,13 +18,16 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
+import dev.m3v.data.*;
+import dev.m3v.data.model.*;
+
 public class YoutubeData {
     private static YouTube youTubeService;
 
     public static void initialize() throws GeneralSecurityException, IOException {
         if (youTubeService != null) return;
-        if (!FromJson.isLoaded()) FromJson.load();
-        String apiKey = FromJson.get().getSecrets().getYoutube_api_key();
+        if (!JsonStorage.isLoaded()) JsonStorage.load();
+        String apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("youtube_api_key missing in data/data.json");
         }
@@ -64,7 +67,7 @@ public class YoutubeData {
             .getUploads();
 
         Set<String> seenVideoIds = new HashSet<>();
-        for (FromJson.CheckData checkDataEntry : FromJson.get().getCheckData()) {
+        for (Memory checkDataEntry : JsonStorage.get().getMemory()) {
             if (checkDataEntry == null) continue;
             if (!channelId.equals(checkDataEntry.getChannelId())) continue;
             if (checkDataEntry.getVideoId() != null) seenVideoIds.add(checkDataEntry.getVideoId());
@@ -75,12 +78,12 @@ public class YoutubeData {
         final long pageSize = 50L;
         int saveLimit = 100;
         int perChannelLimit = 0;
-        if (FromJson.get().getConfigOptions() != null) {
-            if (FromJson.get().getConfigOptions().getLastCheckSaveLimit() > 0) {
-                saveLimit = FromJson.get().getConfigOptions().getLastCheckSaveLimit();
+        if (JsonStorage.get().getConfigOptions() != null) {
+            if (JsonStorage.get().getConfigOptions().getLastCheckSaveLimit() > 0) {
+                saveLimit = JsonStorage.get().getConfigOptions().getLastCheckSaveLimit();
             }
-            if (FromJson.get().getConfigOptions().getLastCheckSaveLimitPerChannel() > 0) {
-                perChannelLimit = FromJson.get().getConfigOptions().getLastCheckSaveLimitPerChannel();
+            if (JsonStorage.get().getConfigOptions().getLastCheckSaveLimitPerChannel() > 0) {
+                perChannelLimit = JsonStorage.get().getConfigOptions().getLastCheckSaveLimitPerChannel();
             }
         }
         int effectiveLimit = (perChannelLimit > 0) ? Math.min(saveLimit, perChannelLimit) : saveLimit;
@@ -123,8 +126,8 @@ public class YoutubeData {
         return newVideoIds;
     }
 
-    private static FromJson.Data toData(Video video) {
-        FromJson.Data data = FromJson.get().getData();
+    private static MediaData toData(Video video) {
+        MediaData data = JsonStorage.get().getData();
         if (video == null) return data;
         if (video.getSnippet() != null) {
             data.setChannelName(video.getSnippet().getChannelTitle());
@@ -214,14 +217,14 @@ public class YoutubeData {
         }
         List<Video> videos = getVideos(ids);
         if (videos.isEmpty()) return;
-        if (!FromJson.isLoaded()) FromJson.load();
-        FromJson jsonData = FromJson.get();
+        if (!JsonStorage.isLoaded()) JsonStorage.load();
+        Data jsonData = JsonStorage.get();
         String roleId = jsonData.getChannels(channelId).getRoleId();
 
         for (int i = videos.size() - 1; i >= 0; i--) {
             Video video = videos.get(i);
             if (video == null) continue;
-            FromJson.Data data = toData(video);
+            MediaData data = toData(video);
             String videoId = video.getId();
             String liveFlag = video.getSnippet() == null ? "none" : video.getSnippet().getLiveBroadcastContent();
             boolean isLiveLike = "live".equalsIgnoreCase(liveFlag);
@@ -229,21 +232,21 @@ public class YoutubeData {
             boolean isVod = ("none".equalsIgnoreCase(liveFlag)) || (hasEnded && !isLiveLike);
 
             if (isLiveLike) {
-                List<FromJson.LiveStream> liveStreams = jsonData.getLiveStreams();
+                List<LiveStreams> liveStreams = jsonData.getLiveStreams();
                 if (liveStreams == null) liveStreams = new ArrayList<>();
                 int existingLiveIndex = -1;
                 for (int streamIndex = 0; streamIndex < liveStreams.size(); streamIndex++) {
                     if (channelId.equals(liveStreams.get(streamIndex).getChannelId())) { existingLiveIndex = streamIndex; break; }
                 }
-                FromJson.LiveStream liveStreamEntry = new FromJson.LiveStream(channelId, videoId, roleId);
+                LiveStreams liveStreamEntry = new LiveStreams(channelId, videoId, roleId);
                 liveStreamEntry.setData(data);
                 if (existingLiveIndex >= 0) liveStreams.set(existingLiveIndex, liveStreamEntry); else liveStreams.add(liveStreamEntry);
                 jsonData.setLiveStreams(liveStreams);
             } else {
-                List<FromJson.CheckData> checkHistory = jsonData.getCheckDataHistory();
+                List<Memory> checkHistory = jsonData.getMemoryCache();
                 if (checkHistory == null) checkHistory = new ArrayList<>();
                 boolean alreadySaved = false;
-                for (FromJson.CheckData historyItem : checkHistory) {
+                for (Memory historyItem : checkHistory) {
                     if (historyItem == null) continue;
                     if (channelId.equals(historyItem.getChannelId()) && videoId.equals(historyItem.getVideoId())) {
                         alreadySaved = true;
@@ -251,7 +254,7 @@ public class YoutubeData {
                     }
                 }
                 if (!alreadySaved) {
-                    FromJson.CheckData checkData = new FromJson.CheckData(channelId, videoId, roleId, isVod);
+                    Memory checkData = new Memory(channelId, videoId, roleId, isVod);
                     checkData.setData(data);
                     checkHistory.add(0, checkData);
                 }
@@ -267,8 +270,8 @@ public class YoutubeData {
 
                 if (perChannelLimit > 0) {
                     int countForChannel = 0;
-                    List<FromJson.CheckData> prunedHistory = new ArrayList<>();
-                    for (FromJson.CheckData historyItem : checkHistory) {
+                    List<Memory> prunedHistory = new ArrayList<>();
+                    for (Memory historyItem : checkHistory) {
                         if (historyItem == null) continue;
                         if (channelId.equals(historyItem.getChannelId())) {
                             if (countForChannel < perChannelLimit) {
@@ -286,9 +289,9 @@ public class YoutubeData {
                 if (checkHistory.size() > globalLimit)
                     checkHistory = new ArrayList<>(checkHistory.subList(0, globalLimit));
 
-                jsonData.setCheckDataHistory(checkHistory);
+                jsonData.setMemoryCache(checkHistory);
             }
         }
-        FromJson.save();
+        JsonStorage.save();
     }
 }

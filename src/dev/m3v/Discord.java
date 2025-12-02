@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import javax.security.auth.login.LoginException;
 
-import dev.m3v.discord.EmbedTemplates;
+import dev.m3v.data.*;
+import dev.m3v.data.model.*;
+import dev.m3v.discord.*;
+
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
@@ -14,7 +17,7 @@ public class Discord {
     private static JDA jdaClient;
 
     public static void initiateBot() throws LoginException, InterruptedException {
-        String discordApiKey = FromJson.get().getSecrets().getDiscord_api_key();
+        String discordApiKey = JsonStorage.get().getSecrets().getDiscord_api_key();
         jdaClient = JDABuilder.createDefault(discordApiKey).build();
         jdaClient.awaitReady();
     }
@@ -32,17 +35,17 @@ public class Discord {
         for (String mediaId : ids) {
             if (mediaId == null || mediaId.isBlank()) continue;
 
-            FromJson.CheckData checkData = null;
-            if (FromJson.get().getCheckDataHistory() != null) {
-                checkData = FromJson.get().getCheckDataHistory().stream()
+            Memory checkData = null;
+            if (JsonStorage.get().getMemoryCache() != null) {
+                checkData = JsonStorage.get().getMemoryCache().stream()
                         .filter(cd -> cd != null && mediaId.equals(cd.getMediaId()))
                         .findFirst()
                         .orElse(null);
             }
 
-            FromJson.LiveStream liveStream = null;
-            if (FromJson.get().getLiveStreams() != null) {
-                liveStream = FromJson.get().getLiveStreams().stream()
+            LiveStreams liveStream = null;
+            if (JsonStorage.get().getLiveStreams() != null) {
+                liveStream = JsonStorage.get().getLiveStreams().stream()
                         .filter(ls -> ls != null && mediaId.equals(ls.getMediaId()))
                         .findFirst()
                         .orElse(null);
@@ -63,14 +66,14 @@ public class Discord {
     public static void vodAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
-        String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
+        String discordChannelId = JsonStorage.get().getConfigOptions().getVideoChannelId();
         if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        FromJson.Data streamData = null;
+        MediaData streamData = null;
 
-        var liveStreamsList = FromJson.get().getLiveStreams();
+        var liveStreamsList = JsonStorage.get().getLiveStreams();
         if (liveStreamsList != null) {
-            for (FromJson.LiveStream stream : liveStreamsList) {
+            for (LiveStreams stream : liveStreamsList) {
                 if (mediaId.equals(stream.getMediaId())) {
                     streamData = stream.getData();
                     break;
@@ -79,9 +82,9 @@ public class Discord {
         }
 
         if (streamData == null) {
-            var checkHistoryList = FromJson.get().getCheckDataHistory();
-            if (checkHistoryList != null) {
-                for (FromJson.CheckData check : checkHistoryList) {
+            var MemoryCache = JsonStorage.get().getMemoryCache();
+            if (MemoryCache != null) {
+                for (Memory check : MemoryCache) {
                     if (mediaId.equals(check.getMediaId())) {
                         streamData = check.getData();
                         break;
@@ -105,7 +108,7 @@ public class Discord {
         );
 
         if (channel == null || discordChannelId == null) return;
-        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String roleId = Objects.requireNonNull(JsonStorage.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
         String mention = "<@&" + roleId + ">";
         channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(streamEndEmbed.build()).queue(
@@ -117,14 +120,14 @@ public class Discord {
     public static void liveAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
-        String discordChannelId = FromJson.get().getConfigOptions().getVideoChannelId();
+        String discordChannelId = JsonStorage.get().getConfigOptions().getVideoChannelId();
         if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        FromJson.Data streamData = null;
+        MediaData streamData = null;
 
-        var liveStreamsList = FromJson.get().getLiveStreams();
+        var liveStreamsList = JsonStorage.get().getLiveStreams();
         if (liveStreamsList != null) {
-            for (FromJson.LiveStream stream : liveStreamsList) {
+            for (LiveStreams stream : liveStreamsList) {
                 if (mediaId.equals(stream.getMediaId())) {
                     streamData = stream.getData();
                     break;
@@ -133,9 +136,9 @@ public class Discord {
         }
 
         if (streamData == null) {
-            var checkHistoryList = FromJson.get().getCheckDataHistory();
-            if (checkHistoryList != null) {
-                for (FromJson.CheckData check : checkHistoryList) {
+            var MemoryCache = JsonStorage.get().getMemoryCache();
+            if (MemoryCache != null) {
+                for (Memory check : MemoryCache) {
                     if (mediaId.equals(check.getMediaId())) {
                         streamData = check.getData();
                         break;
@@ -159,7 +162,7 @@ public class Discord {
         );
 
         if (channel == null || discordChannelId == null) return;
-        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String roleId = Objects.requireNonNull(JsonStorage.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
         String mention = "<@&" + roleId + ">";
         channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(liveEmbed.build()).queue(
@@ -171,15 +174,15 @@ public class Discord {
     public static void primierAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
-        String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        String discordChannelId = JsonStorage.get().getConfigOptions().getPremiereChannelId();
         if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
-        FromJson.Data streamData = null;
+        MediaData streamData = null;
 
-        var checkHistoryList = FromJson.get().getCheckDataHistory();
-        if (checkHistoryList != null) {
-            for (FromJson.CheckData check : checkHistoryList) {
+        var MemoryCache = JsonStorage.get().getMemoryCache();
+        if (MemoryCache != null) {
+            for (Memory check : MemoryCache) {
                 if (mediaId.equals(check.getMediaId())) {
                     streamData = check.getData();
                     break;
@@ -207,14 +210,14 @@ public class Discord {
     public static void videoAnouncement(String mediaId) {
         if (mediaId == null || mediaId.isBlank()) return;
 
-        String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        String discordChannelId = JsonStorage.get().getConfigOptions().getPremiereChannelId();
         if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
-        FromJson.Data streamData = null;
+        MediaData streamData = null;
 
-        var checkHistoryList = FromJson.get().getCheckDataHistory();
-        if (checkHistoryList != null) {
-            for (FromJson.CheckData check : checkHistoryList) {
+        var MemoryCache = JsonStorage.get().getMemoryCache();
+        if (MemoryCache != null) {
+            for (Memory check : MemoryCache) {
                 if (mediaId.equals(check.getMediaId())) {
                     streamData = check.getData();
                     break;
@@ -223,9 +226,9 @@ public class Discord {
         }
 
         if (streamData == null) {
-            var liveStreamsList = FromJson.get().getLiveStreams();
+            var liveStreamsList = JsonStorage.get().getLiveStreams();
             if (liveStreamsList != null) {
-                for (FromJson.LiveStream stream : liveStreamsList) {
+                for (LiveStreams stream : liveStreamsList) {
                     if (mediaId.equals(stream.getMediaId())) {
                         streamData = stream.getData();
                         break;
@@ -248,7 +251,7 @@ public class Discord {
         );
 
         if (channel == null || discordChannelId == null) return;
-        String roleId = Objects.requireNonNull(FromJson.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
+        String roleId = Objects.requireNonNull(JsonStorage.get().getChannels(discordChannelId).getRoleId(), "roleId must not be null");
         String mention = "<@&" + roleId + ">";
         channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(videoEmbed.build()).queue(
@@ -267,12 +270,12 @@ public class Discord {
             error = errorMessage;
         }
         EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, error);
-        String discordChannelId = FromJson.get().getConfigOptions().getPremiereChannelId();
+        String discordChannelId = JsonStorage.get().getConfigOptions().getPremiereChannelId();
         if (discordChannelId == null) return;
         MessageChannel channel = jdaClient.getTextChannelById(discordChannelId);
         if (channel == null) return;
 
-        String adminId = Objects.requireNonNull(FromJson.get().getConfigOptions().getAdminId(), "roleId must not be null");
+        String adminId = Objects.requireNonNull(JsonStorage.get().getConfigOptions().getAdminId(), "roleId must not be null");
         String mention = "<@&" + adminId + ">";
         channel.sendMessage(mention).queue();
         channel.sendMessageEmbeds(errorEmbed.build()).queue();
@@ -282,9 +285,9 @@ public class Discord {
         if (mediaId == null || messageId == null) return;
         boolean updated = false;
 
-        List<FromJson.CheckData> checks = FromJson.get().getCheckDataHistory();
+        List<Memory> checks = JsonStorage.get().getMemoryCache();
         if (checks != null) {
-            for (FromJson.CheckData cd : checks) {
+            for (Memory cd : checks) {
                 if (cd != null && mediaId.equals(cd.getMediaId())) {
                     cd.setMessageId(messageId);
                     updated = true;
@@ -294,9 +297,9 @@ public class Discord {
         }
 
         if (!updated) {
-            List<FromJson.LiveStream> lives = FromJson.get().getLiveStreams();
+            List<LiveStreams> lives = JsonStorage.get().getLiveStreams();
             if (lives != null) {
-                for (FromJson.LiveStream ls : lives) {
+                for (LiveStreams ls : lives) {
                     if (ls != null && mediaId.equals(ls.getMediaId())) {
                         ls.setMessageId(messageId);
                         updated = true;
@@ -307,7 +310,7 @@ public class Discord {
         }
 
         if (updated) {
-            FromJson.save();
+            JsonStorage.save();
         }
     }
 }
