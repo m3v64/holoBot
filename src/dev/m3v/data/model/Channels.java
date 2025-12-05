@@ -10,7 +10,7 @@ public class Channels {
 
     public Channels(String channelId) {
         if (!JsonStorage.isLoaded()) {
-            throw new IllegalStateException("FromJson is not loaded. Call FromJson.load() before creating Channel instances.");
+            // error handeling
         }
 
         Channels match = JsonStorage.get().getChannels()

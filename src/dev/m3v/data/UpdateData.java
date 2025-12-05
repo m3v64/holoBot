@@ -5,7 +5,7 @@ import java.util.List;
 import dev.m3v.data.model.*;
 
 public class UpdateData {
-    public static void updateQue() {
+    public static void updateQueue() {
         List<Channels> channels = JsonStorage.get().getChannels();
         if (channels == null || channels.isEmpty()) return;
 
@@ -48,19 +48,21 @@ public class UpdateData {
         JsonStorage.save();
     }
 
-    public static void updateQueAndCooldownData() {
-        updateQue();
+    public static void updateQueAndCooldown() {
+        updateQueue();
         updateCooldown();
     }
 
     public static String getLowestChannelId() {
-        for (Channels channel : JsonStorage.get().getChannels()) {
-            if (channel.getCheckQueue() == 1 ) {
-                if (channel.getCheckCooldown() == 0)
-                    return channel.getChannelId();
-            }
+        List<Channels> channels = JsonStorage.get().getChannels();
+        if (channels == null || channels.isEmpty()) return null;
+
+        Channels min = null;
+        for (Channels channel : channels) {
+            if (min == null || channel.getCheckQueue() < min.getCheckQueue()) min = channel;
         }
 
-        return null;
+        if (min != null) return min.getChannelId();
+        else return null;
     }
 }

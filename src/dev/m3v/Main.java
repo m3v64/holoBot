@@ -69,7 +69,7 @@ public class Main {
             if (lowestId == null) return newVideoIds;
             newVideoIds = YoutubeData.check(YoutubeData.getYoutubeData(lowestId), lowestId);
             YoutubeData.saveVideos(newVideoIds, lowestId);
-            UpdateData.updateQueAndCooldownData();
+            UpdateData.updateQueAndCooldown();
             return newVideoIds;
         } catch (Exception e) {
             System.err.println(e);
@@ -86,7 +86,7 @@ public class Main {
                 String channelId = channel.getChannelId();
                 // streamIds = YoutubeData.checkStream(YoutubeData.getYoutubeData(channelId), channelId);
                 YoutubeData.saveVideos(streamIds, channelId);
-                UpdateData.updateQueAndCooldownData();
+                UpdateData.updateQueAndCooldown();
             }
         } catch (Exception e) {
             System.err.println(e);

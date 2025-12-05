@@ -22,10 +22,6 @@ public class Discord {
         jdaClient.awaitReady();
     }
 
-    public static boolean isLoaded() {
-        return jdaClient != null;
-    }
-
     public static void updateMessage(List<String> streamIds) {
 
     }

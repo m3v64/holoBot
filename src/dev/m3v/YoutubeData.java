@@ -29,7 +29,7 @@ public class YoutubeData {
         if (!JsonStorage.isLoaded()) JsonStorage.load();
         String apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
         if (apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException("youtube_api_key missing in data/data.json");
+            // implement error handeling
         }
         HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
         youTubeService = new YouTube.Builder(transport, GsonFactory.getDefaultInstance(), request -> {})
@@ -49,8 +49,7 @@ public class YoutubeData {
             .setFields("items(contentDetails/relatedPlaylists/uploads)")
             .setMaxResults(1L)
             .execute();
-        if (channelsResponse.getItems() == null || channelsResponse.getItems().isEmpty())
-            throw new RuntimeException("YouTube channels.list returned no items");
+        if (channelsResponse.getItems() == null || channelsResponse.getItems().isEmpty()) return null; // implement error handeling
         return channelsResponse;
     }
 

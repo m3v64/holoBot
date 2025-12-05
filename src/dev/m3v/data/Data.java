@@ -44,7 +44,7 @@ public class Data {
     public void setChannels(List<Channels> channels) { this.channels = channels; }
 
     public Channels setChannels(String channelId, Channels channelData) {
-        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (channelId == null) // implement error handeling 
         if (this.channels == null) this.channels = new ArrayList<>();
 
         Channels existing = this.channels.stream()
@@ -75,7 +75,7 @@ public class Data {
     public void setMemoryCache(List<Memory> Memory) { this.memoryCache = Memory; }
 
     public Memory setMemoryCache(String channelId, Memory data) {
-        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (channelId == null) // implement error handeling
         if (this.memoryCache == null) this.memoryCache = new ArrayList<>();
 
         Memory existing = this.memoryCache.stream()
@@ -126,7 +126,7 @@ public class Data {
     public void setLiveStreams(List<LiveStreams> liveStreams) { this.liveStreams = liveStreams; }
 
     public LiveStreams setLiveStreams(String channelId, LiveStreams stream) {
-        if (channelId == null) throw new IllegalArgumentException("channelId cannot be null");
+        if (channelId == null) // implement error handeling
         if (this.liveStreams == null) this.liveStreams = new ArrayList<>();
 
         LiveStreams existing = this.liveStreams.stream()
