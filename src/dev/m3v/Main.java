@@ -1,6 +1,7 @@
 package dev.m3v;
 
 import java.util.concurrent.*;
+import dev.m3v.discord.*;
 import dev.m3v.data.*;
 import dev.m3v.data.model.*;
 
@@ -47,7 +48,7 @@ public class Main {
     }
 
     private static void update(boolean post) {
-        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return;
+        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return;
 
         try {
             List<String> newVideoIds = checkData();
@@ -62,7 +63,7 @@ public class Main {
 
     private static List<String> checkData() {
         List<String> newVideoIds = new ArrayList<>();
-        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return newVideoIds;
+        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return newVideoIds;
 
         try {
             String lowestId = UpdateData.getLowestChannelId();
@@ -79,7 +80,7 @@ public class Main {
 
     private static List<String> checkStreamData() {
         List<String> streamIds = new ArrayList<>();
-        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Discord.isLoaded()) return streamIds;
+        if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return streamIds;
 
         try {
             for (Channels channel : JsonStorage.get().getChannels()) {
