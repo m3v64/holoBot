@@ -4,6 +4,7 @@ import java.util.concurrent.*;
 import dev.m3v.discord.*;
 import dev.m3v.data.*;
 import dev.m3v.data.model.*;
+import dev.m3v.data.model.media.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class Main {
         System.out.println("Starting holoBot...");
         try {
             JsonStorage.load();
-            Discord.initiateBot();
+            Bot.initiateBot();
             YoutubeData.initialize();
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,7 +29,7 @@ public class Main {
                 checkStreamData();
                 update(true);
             } catch (Exception e) {
-                Discord.sendError("Main check task loop", null, e);
+                Bot.sendError("Main check task loop", null, e);
             }
         };
 
@@ -52,7 +53,14 @@ public class Main {
 
         try {
             List<String> newVideoIds = checkData();
-            if (post && !newVideoIds.isEmpty()) Discord.sendMessage(newVideoIds);
+            List<Media> newVideoMedia = new ArrayList<>();
+
+            for (String videoId : newVideoIds) {
+                newVideoMedia.add(JsonStorage.get().getMediaById(videoId));
+            }
+            for (Media media : newVideoMedia) {
+                if (post && !newVideoIds.isEmpty()) Bot.sendEmbed(media);
+            }
 
             // List<String> StreamIds = checkStreamData();
             // Discord.updateMessage(); // finish this method if needed

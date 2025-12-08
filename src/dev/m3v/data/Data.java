@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.m3v.data.model.*;
-import dev.m3v.data.model.media.LiveStreams;
-import dev.m3v.data.model.media.MediaData;
-import dev.m3v.data.model.media.Memory;
+import dev.m3v.data.model.media.*;
 
 
 public class Data {
@@ -47,7 +45,7 @@ public class Data {
     public void setChannels(List<Channels> channels) { this.channels = channels; }
 
     public Channels setChannels(String channelId, Channels channelData) {
-        if (channelId == null) // implement error handeling 
+        if (channelId == null); // implement error handeling 
         if (this.channels == null) this.channels = new ArrayList<>();
 
         Channels existing = this.channels.stream()
@@ -64,10 +62,9 @@ public class Data {
             return existing;
         }
 
-    Channels toAdd = (channelData == null)
-        ? new Channels(channelId, 0, 0, "")
-        : new Channels(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
-    toAdd.setCheckCooldown(channelData == null ? 0 : channelData.getCheckCooldown());
+        Channels toAdd = (channelData == null)
+            ? new Channels(channelId, 0, 0, "")
+            : new Channels(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
         this.channels.add(toAdd);
         return toAdd;
     }
@@ -78,45 +75,32 @@ public class Data {
     public void setMemoryCache(List<Memory> Memory) { this.memoryCache = Memory; }
 
     public Memory setMemoryCache(String channelId, Memory data) {
-        if (channelId == null) // implement error handeling
+        if (channelId == null); // implement error handeling
         if (this.memoryCache == null) this.memoryCache = new ArrayList<>();
 
         Memory existing = this.memoryCache.stream()
-                .filter(channels -> channels.getChannelId() != null && channels.getChannelId().equals(channelId))
+                .filter(memory -> memory.getMedia() != null && memory.getMedia().getChannelId() != null && memory.getMedia().getChannelId().equals(channelId))
                 .findFirst()
                 .orElse(null);
 
         if (existing != null) {
             if (data != null) {
-                existing.setMediaId(data.getMediaId());
-                existing.setRoleId(data.getRoleId());
-                existing.setMessageId(data.getMessageId());
-                existing.setIsPremier(data.getIsPremier());
-                existing.setIsVod(data.getIsVod());
-                existing.setData(data.getData());
+                existing.setMedia(data.getMedia());
             }
             return existing;
         }
 
-    Memory toAdd = (data == null)
-        ? new Memory(channelId, "", "")
-        : new Memory(channelId, data.getMediaId(), data.getRoleId());
-    if (data != null) {
-        toAdd.setMessageId(data.getMessageId());
-        toAdd.setIsPremier(data.getIsPremier());
-        toAdd.setIsVod(data.getIsVod());
-        toAdd.setData(data.getData());
-    }
+        Memory toAdd = (data == null) ? new Memory() : new Memory(data.getMedia());
         this.memoryCache.add(toAdd);
         return toAdd;
     }
 
     public Memory getMemoryCache(String channelId) {
-        if (memoryCache == null) return new Memory(channelId, "", "");
+        if (memoryCache == null) return new Memory();
         return memoryCache.stream()
-                .filter(channels -> channels.getChannelId() != null && channels.getChannelId().equals(channelId))
+                .filter(memory -> memory.getMedia() != null && memory.getMedia().getChannelId() != null && memory.getMedia().getChannelId().equals(channelId))
                 .findFirst()
-                .orElse(new Memory(channelId, "", ""));
+                .orElse(new Memory());
     }
 
     public List<Memory> getMemory() { return memoryCache; }
@@ -129,45 +113,32 @@ public class Data {
     public void setLiveStreams(List<LiveStreams> liveStreams) { this.liveStreams = liveStreams; }
 
     public LiveStreams setLiveStreams(String channelId, LiveStreams stream) {
-        if (channelId == null) // implement error handeling
+        if (channelId == null); // implement error handeling
         if (this.liveStreams == null) this.liveStreams = new ArrayList<>();
 
         LiveStreams existing = this.liveStreams.stream()
-                .filter(l -> l.getChannelId() != null && l.getChannelId().equals(channelId))
+                .filter(l -> l.getMedia() != null && l.getMedia().getChannelId() != null && l.getMedia().getChannelId().equals(channelId))
                 .findFirst()
                 .orElse(null);
 
         if (existing != null) {
             if (stream != null) {
-                existing.setMediaId(stream.getMediaId());
-                existing.setRoleId(stream.getRoleId());
-                existing.setMessageId(stream.getMessageId());
-                existing.setIsPremier(stream.getIsPremier());
-                existing.setIsVod(stream.getIsVod());
-                existing.setData(stream.getData());
+                existing.setMedia(stream.getMedia());
             }
             return existing;
         }
 
-    LiveStreams toAdd = (stream == null)
-        ? new LiveStreams(channelId, "", "")
-        : new LiveStreams(channelId, stream.getMediaId(), stream.getRoleId());
-    if (stream != null) {
-        toAdd.setMessageId(stream.getMessageId());
-        toAdd.setIsPremier(stream.getIsPremier());
-        toAdd.setIsVod(stream.getIsVod());
-        toAdd.setData(stream.getData());
-    }
+        LiveStreams toAdd = (stream == null) ? new LiveStreams() : new LiveStreams(stream.getMedia());
         this.liveStreams.add(toAdd);
         return toAdd;
     }
 
     public LiveStreams getLiveStreams(String channelId) {
-        if (liveStreams == null) return new LiveStreams(channelId, "", "");
+        if (liveStreams == null) return new LiveStreams();
         return liveStreams.stream()
-                .filter(l -> l.getChannelId() != null && l.getChannelId().equals(channelId))
+                .filter(l -> l.getMedia() != null && l.getMedia().getChannelId() != null && l.getMedia().getChannelId().equals(channelId))
                 .findFirst()
-                .orElse(new LiveStreams(channelId, "", ""));
+                .orElse(new LiveStreams());
     }
 
     public ConfigOptions getConfigOptions() { return configOptions; }
@@ -175,4 +146,27 @@ public class Data {
 
     public MediaData getData() { return mediaData; }
     public void setData(MediaData mediaData) { this.mediaData = mediaData; }
+
+    public Media getMediaById(String mediaId) {
+        if (mediaId == null) return null;
+        
+        if (memoryCache != null) {
+            Media media = memoryCache.stream()
+                .map(Memory::getMedia)
+                .filter(m -> m != null && mediaId.equals(m.getMediaId()))
+                .findFirst()
+                .orElse(null);
+            if (media != null) return media;
+        }
+        
+        if (liveStreams != null) {
+            return liveStreams.stream()
+                .map(LiveStreams::getMedia)
+                .filter(m -> m != null && mediaId.equals(m.getMediaId()))
+                .findFirst()
+                .orElse(null);
+        }
+        
+        return null;
+    }
 }
