@@ -11,8 +11,8 @@
         "lastCheckSaveLimitPerChannel": 20,
 
         "mediaChannelId": "",
-        "premiereChannelId": "",
-        "liveStreamChannelId": "",
+        "premierChannelId": "",
+        "streamChannelId": "",
         "modChannelId": "",
         "adminPingId": ""
     },
@@ -24,54 +24,57 @@
             "roleId": "" 
         }
     ],
-    "liveStreams": [
-        { 
-            "channelId": "", 
-            "mediaId": "",
-            "roleId": "",
-            "messageId": "",
-            "isPremier": false,
-            "isVod": false, 
-            "data": 
-                { 
-                    "channelName": "", 
-                    "channelUrl": "", 
-                    "title": "", 
-                    "description": "", 
-                    "mediaUrl": "", 
-                    "thumbnailUrl": "", 
-                    "duration": "", 
-                    "views": 0, 
-                    "avgViewers": 0, 
-                    "peakViewers": 0, 
-                    "startTime": "", 
-                    "endTime": "" 
-                } 
-        }
-    ],
-    "memory": [
-        { 
-            "channelId": "", 
-            "mediaId": "",
-            "roleId": "",
-            "messageId": "",
-            "isPremier": false,
-            "isVod": true, 
-            "data": 
-                { 
-                    "channelName": "", 
-                    "channelUrl": "", 
-                    "title": "", 
-                    "description": "", 
-                    "mediaUrl": "", 
-                    "thumbnailUrl": "", 
-                    "duration": "", 
-                    "views": 0, 
-                    "avgViewers": 0, 
-                    "peakViewers": 0, 
-                    "startTime": "", 
-                    "endTime": "" 
-                } 
+    "media": [
+        {
+        "liveStreams": [
+            { 
+                "channelId": "", 
+                "mediaId": "",
+                "roleId": "",
+                "messageId": "",
+                "type": "",
+                "data": 
+                    { 
+                        "channelName": "", 
+                        "channelUrl": "", 
+                        "title": "", 
+                        "description": "", 
+                        "mediaUrl": "", 
+                        "thumbnailUrl": "", 
+                        "duration": "", 
+                        "views": 0, 
+                        "avgViewers": 0, 
+                        "peakViewers": 0, 
+                        "startTime": "", 
+                        "endTime": "" 
+                    } 
+            }
+        ],
+        "memory": [
+            { 
+                "channelId": "", 
+                "mediaId": "",
+                "roleId": "",
+                "messageId": "",
+                "isPremier": false,
+                "isVod": true, 
+                "data": 
+                    { 
+                        "channelName": "", 
+                        "channelUrl": "", 
+                        "title": "", 
+                        "description": "", 
+                        "mediaUrl": "", 
+                        "thumbnailUrl": "", 
+                        "duration": "", 
+                        "views": 0, 
+                        "avgViewers": 0, 
+                        "peakViewers": 0, 
+                        "startTime": "", 
+                        "endTime": "" 
+                    } 
+            }
+        ]
         }
     ]
 }

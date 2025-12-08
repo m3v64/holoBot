@@ -1,4 +1,4 @@
-package dev.m3v.data.model;
+package dev.m3v.data.model.media;
 
 public class MediaData {
     private String channelName;
@@ -15,6 +15,20 @@ public class MediaData {
     private String endTime;
 
     public MediaData() {}
+    public MediaData(String channelName, String channelUrl, String title, String description, String mediaUrl, String thumbnailUrl, String duration, int views, int avgViewers, int peakViewers, String startTime, String endTime) {
+        this.channelName = channelName;
+        this.channelUrl = channelUrl;
+        this.title = title;
+        this.description = description;
+        this.mediaUrl = mediaUrl;
+        this.thumbnailUrl = thumbnailUrl;
+        this.duration = duration;
+        this.views = views;
+        this.avgViewers = avgViewers;
+        this.peakViewers = peakViewers;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 
     public String getChannelName() { return channelName; }
     public void setChannelName(String channelName) { this.channelName = channelName; }

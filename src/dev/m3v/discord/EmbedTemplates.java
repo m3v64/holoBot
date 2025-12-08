@@ -7,10 +7,22 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import dev.m3v.data.model.media.*;
+
 public class EmbedTemplates {
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static EmbedBuilder createLiveEmbed(String channelName, String channelUrl, String title, String description, String streamUrl, String thumbnailUrl, int averageViewers, int peakViewers, String startTime) {
+    public static EmbedBuilder createStreamEmbed(MediaData mediaData) {
+        String channelName = mediaData.getChannelName();
+        String channelUrl = mediaData.getChannelUrl();
+        String title = mediaData.getTitle();
+        String description = mediaData.getDescription();
+        String mediaUrl = mediaData.getMediaUrl();
+        String thumbnailUrl = mediaData.getThumbnailUrl();
+        int averageViewers = mediaData.getAvgViewers();
+        int peakViewers = mediaData.getPeakViewers();
+        String startTime = mediaData.getStartTime();
+
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setColor(new Color(255, 0, 0));
@@ -18,7 +30,7 @@ public class EmbedTemplates {
         embed.setDescription(String.format("""
             ### [%s](%s)
             %s
-            """, title, streamUrl, description));
+            """, title, mediaUrl, description));
 
         embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
 
@@ -30,7 +42,17 @@ public class EmbedTemplates {
         return embed;
     }
 
-    public static EmbedBuilder createEndedStreamEmbed(String channelName, String channelUrl, String title, String streamUrl, String thumbnailUrl, String duration, int averageViewers, int peakViewers, String endTime) {
+    public static EmbedBuilder createVodEmbed(MediaData mediaData) {
+        String channelName = mediaData.getChannelName();
+        String channelUrl = mediaData.getChannelUrl();
+        String title = mediaData.getTitle();
+        String mediaUrl = mediaData.getMediaUrl();
+        String thumbnailUrl = mediaData.getThumbnailUrl();
+        String duration = mediaData.getDuration();
+        int averageViewers = mediaData.getAvgViewers();
+        int peakViewers = mediaData.getPeakViewers();
+        String endTime = mediaData.getEndTime();
+
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setColor(new Color(135, 0, 0));
@@ -38,7 +60,7 @@ public class EmbedTemplates {
         embed.setDescription(String.format("""
             ### [%s](%s)
             Video available: [%s]
-            """, title, streamUrl, duration));
+            """, title, mediaUrl, duration));
 
         embed.addField("Viewers", averageViewers + " avg / " + peakViewers + " peak", false);
 
@@ -50,7 +72,15 @@ public class EmbedTemplates {
         return embed;
     }
 
-    public static EmbedBuilder createVideoEmbed(String channelName, String channelUrl, String title, String videoUrl, String thumbnailUrl, String duration, int views, String endTime) {
+    public static EmbedBuilder createVideoEmbed(MediaData mediaData) {
+        String channelName = mediaData.getChannelName();
+        String channelUrl = mediaData.getChannelUrl();
+        String title = mediaData.getTitle();
+        String mediaUrl = mediaData.getMediaUrl();
+        String thumbnailUrl = mediaData.getThumbnailUrl();
+        String duration = mediaData.getDuration();
+        int views = mediaData.getViews();
+        String endTime = mediaData.getEndTime();
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setColor(new Color(255, 144, 0));
@@ -58,7 +88,7 @@ public class EmbedTemplates {
         embed.setDescription(String.format("""
             ### [%s](%s)
             Video available: [%s]
-            """, title, videoUrl, duration));
+            """, title, mediaUrl, duration));
 
         embed.addField("Views", views + "", false);
 
@@ -70,14 +100,21 @@ public class EmbedTemplates {
         return embed;
     }
 
-    public static EmbedBuilder createPremierEmbed(String channelName, String channelUrl, String title, String videoUrl, String thumbnailUrl, String startTime) {
+    public static EmbedBuilder createPremierEmbed(MediaData mediaData) {
+        String channelName = mediaData.getChannelName();
+        String channelUrl = mediaData.getChannelUrl();
+        String title = mediaData.getTitle();
+        String mediaUrl = mediaData.getMediaUrl();
+        String thumbnailUrl = mediaData.getThumbnailUrl();
+        String startTime = mediaData.getStartTime();
+
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setColor(new Color(40, 40, 40));
         embed.setAuthor(channelName + " is premiering a new video on YouTube!", channelUrl);
         embed.setDescription(String.format("""
             ### [%s](%s)
-            """, title, videoUrl));
+            """, title, mediaUrl));
 
         ZonedDateTime zonedDateTime = ZonedDateTime.parse(startTime);
         long epochSeconds = zonedDateTime.toEpochSecond();

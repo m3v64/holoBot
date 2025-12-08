@@ -10,13 +10,13 @@ public class ConfigOptions {
     private int lastCheckSaveLimit;
     private int lastCheckSaveLimitPerChannel;
     private String mediaChannelId;
-    private String premiereChannelId;
-    private String liveStreamChannelId;
+    private String premierChannelId;
+    private String streamChannelId;
     private String modChannelId;
     private String adminPingId;
 
     public ConfigOptions() {}
-    public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, int lastCheckSaveLimitPerChannel, String mediaChannelId, String premiereChannelId, String liveStreamChannelId, String modChannelId, String adminPingId) {
+    public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, int lastCheckSaveLimitPerChannel, String mediaChannelId, String premierChannelId, String streamChannelId, String modChannelId, String adminPingId) {
         this.logLevel = logLevel;
         this.timezone = timezone;
         this.checkIntervalSeconds = checkIntervalSeconds;
@@ -24,15 +24,14 @@ public class ConfigOptions {
         this.lastCheckSaveLimit = lastCheckSaveLimitPerChannel * JsonStorage.get().getChannels().size();
         this.lastCheckSaveLimitPerChannel = lastCheckSaveLimitPerChannel;
         this.mediaChannelId = mediaChannelId;
-        this.premiereChannelId = premiereChannelId;
-        this.liveStreamChannelId = liveStreamChannelId;
+        this.premierChannelId = premierChannelId;
+        this.streamChannelId = streamChannelId;
         this.modChannelId = modChannelId;
         this.adminPingId = adminPingId;
     }
 
-    public ConfigOptions(String logLevel, String timezone, int checkIntervalSeconds, int channelCooldownMinutes, int lastCheckSaveLimit, String mediaChannelId, String premiereChannelId, String liveStreamChannelId, String modChannelId, String adminId) {
-        this(logLevel, timezone, checkIntervalSeconds, channelCooldownMinutes, lastCheckSaveLimit, 0, mediaChannelId, premiereChannelId, liveStreamChannelId, modChannelId, adminId);
-    }
+    public void setLastCheckSaveLimit(int lastCheckSaveLimit) { this.lastCheckSaveLimit = lastCheckSaveLimit; }
+    public void setPremierChannelId(String premierChannelId) { this.premierChannelId = premierChannelId; }
 
     public String getLogLevel() { return logLevel; }
     public void setLogLevel(String logLevel) { this.logLevel = logLevel; }
@@ -54,14 +53,11 @@ public class ConfigOptions {
     public String getMediaChannelId() { return mediaChannelId; }
     public void setMediaChannelId(String mediaChannelId) { this.mediaChannelId = mediaChannelId; }
 
-    public String getVideoChannelId() { return mediaChannelId; }
-    public void setVideoChannelId(String videoChannelId) { this.mediaChannelId = videoChannelId; }
+    public String getPremierChannelId() { return premierChannelId; }
+    public void setPremiereChannelId(String premiereChannelId) { this.premierChannelId = premiereChannelId; }
 
-    public String getPremiereChannelId() { return premiereChannelId; }
-    public void setPremiereChannelId(String premiereChannelId) { this.premiereChannelId = premiereChannelId; }
-
-    public String getLiveStreamChannelId() { return liveStreamChannelId; }
-    public void setLiveStreamChannelId(String liveStreamChannelId) { this.liveStreamChannelId = liveStreamChannelId; }
+    public String getStreamChannelId() { return streamChannelId; }
+    public void setStreamChannelId(String liveStreamChannelId) { this.streamChannelId = liveStreamChannelId; }
 
     public String getModChannelId() { return modChannelId; }
     public void setModChannelId(String modChannelId) { this.modChannelId = modChannelId; }
