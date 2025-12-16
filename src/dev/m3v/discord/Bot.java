@@ -8,6 +8,8 @@ import java.util.Objects;
 import javax.security.auth.login.LoginException;
 
 import dev.m3v.data.*;
+import dev.m3v.data.model.LiveStreams;
+import dev.m3v.data.model.Memory;
 import dev.m3v.data.model.media.*;
 
 import net.dv8tion.jda.api.*;

@@ -20,9 +20,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 
 import dev.m3v.data.*;
 import dev.m3v.data.model.*;
-import dev.m3v.data.model.media.LiveStreams;
-import dev.m3v.data.model.media.MediaData;
-import dev.m3v.data.model.media.Memory;
+import dev.m3v.data.model.media.*;
 
 public class YoutubeData {
     private static YouTube youTubeService;

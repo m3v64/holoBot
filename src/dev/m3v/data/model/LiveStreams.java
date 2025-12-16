@@ -1,10 +1,12 @@
-package dev.m3v.data.model.media;
+package dev.m3v.data.model;
 
-public class Memory {
+import dev.m3v.data.model.media.Media;
+
+public class LiveStreams {
     private Media media;
 
-    public Memory() {}
-    public Memory(Media media) {
+    public LiveStreams() {}
+    public LiveStreams(Media media) {
         this.media = media;
     }
 
