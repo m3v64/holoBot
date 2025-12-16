@@ -15,13 +15,17 @@ public class JsonStorage {
 
     public static Data load() {
         try (FileReader reader = new FileReader(PATH)) {
-            return gson.fromJson(reader, Data.class);
+            Data.instance = gson.fromJson(reader, Data.class);
+            if (Data.instance == null) {
+                Data.instance = new Data(1.0, new Secrets(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ConfigOptions());
+            }
+            return Data.instance;
         } catch (Exception FileNotFoundException ) {
             File file = new File(PATH);
             try {
                 file.createNewFile();
-                FileReader reader = new FileReader(PATH);
-                return gson.fromJson(reader, Data.class);
+                Data.instance = new Data(1.0, new Secrets(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ConfigOptions());
+                return Data.instance;
             } catch (Exception e) {
                 return null;
             }
@@ -46,7 +50,8 @@ public class JsonStorage {
 
     public static Data get() {
         if (Data.instance == null) {
-            // handle exception
+            System.err.println("Data instance isnt initialized yet");
+            System.exit(1);
         }
         return Data.instance;
     }

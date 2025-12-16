@@ -2,6 +2,7 @@ package dev.m3v.youtube;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -19,6 +20,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.LiveBroadcastListResponse;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.SearchListResponse;
@@ -27,13 +29,14 @@ import dev.m3v.data.*;
 
 public class Client {
     private static YouTube youTubeClient;
-    private static final String CLIENT_SECRETS= JsonStorage.get().getSecrets().getYoutube_api_key();
+    private static final String CLIENT_SECRETS= "data/client_secret.json";
     private static final Collection<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
     private static final String APPLICATION_NAME = "holoBot";
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(new ByteArrayInputStream(CLIENT_SECRETS.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        InputStream in = Client.class.getResourceAsStream(CLIENT_SECRETS);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
         return credential;
@@ -89,8 +92,8 @@ public class Client {
         return videoListResponse;
     }
 
-    public static ChannelListResponse getBroadcast(String channelId) throws IOException, GeneralSecurityException{
-        ChannelListResponse response = youTubeClient.channels()
+    public static LiveBroadcastListResponse getBroadcast(String channelId) throws IOException, GeneralSecurityException{
+        LiveBroadcastListResponse response = youTubeClient.liveBroadcasts()
             .list(List.of("snippet,contentDetails,status"))
             .setId(List.of(channelId))
             .execute();
