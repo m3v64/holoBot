@@ -18,7 +18,7 @@ public class UnitTests {
     }
 
     try {
-        System.out.println(Client.getBroadcast("NRxNnIlsBW8"));
+        System.out.println(Client.getVideo("3SFk-xyQpjk"));
     } catch (IOException e) {
         System.err.println("Failed during Test");
         e.printStackTrace();

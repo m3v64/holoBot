@@ -1,6 +1,7 @@
 package dev.m3v.youtube;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,7 +36,7 @@ public class Client {
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
-        InputStream in = Client.class.getResourceAsStream(CLIENT_SECRETS);
+        InputStream in = new FileInputStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
