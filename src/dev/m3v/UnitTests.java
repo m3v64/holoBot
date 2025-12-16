@@ -1,7 +1,6 @@
 package dev.m3v;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import dev.m3v.data.JsonStorage;
 import dev.m3v.youtube.*;
@@ -20,10 +19,6 @@ public class UnitTests {
     try {
         System.out.println(Client.getVideo("3SFk-xyQpjk"));
     } catch (IOException e) {
-        System.err.println("Failed during Test");
-        e.printStackTrace();
-        System.exit(1);
-    } catch (GeneralSecurityException e) {
         System.err.println("Failed during Test");
         e.printStackTrace();
         System.exit(1);
