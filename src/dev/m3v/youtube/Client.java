@@ -59,8 +59,7 @@ public class Client {
         return response;
     }
 
-    public static PlaylistItemListResponse getRecentUploadsPlayList(ChannelListResponse channelsResponse) throws IOException, GeneralSecurityException {
-        long pageSize = JsonStorage.get().getConfigOptions().getsaveLimitPerChannel();
+    public static PlaylistItemListResponse getRecentUploadsPlayList(ChannelListResponse channelsResponse, long maxResults) throws IOException, GeneralSecurityException {
         String uploadsId = channelsResponse.getItems().get(0)
             .getContentDetails()
             .getRelatedPlaylists()
@@ -69,7 +68,7 @@ public class Client {
         PlaylistItemListResponse playlistResponse = youTubeClient.playlistItems()
             .list(List.of("snippet,contentDetails,status"))
             .setPlaylistId(uploadsId)
-            .setMaxResults(pageSize)
+            .setMaxResults(maxResults)
             .execute();
         return playlistResponse;
     }
