@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+        System.out.println("file.encoding=" + System.getProperty("file.encoding"));
         UnitTests.test();
         // System.out.println("Starting holoBot...");
         // try {

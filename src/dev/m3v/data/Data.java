@@ -16,15 +16,16 @@ public class Data {
     private List<Memory> memoryCache;
     private List<LiveStreams> liveStreams;
     private ConfigOptions configOptions;
-    private MediaData mediaData;
+    private Media media; 
 
-    public Data(double version, Secrets secrets, List<Channels> channels, List<Memory> memoryCache, List<LiveStreams> liveStreams, ConfigOptions configOptions) {
+    public Data(double version, Secrets secrets, List<Channels> channels, List<Memory> memoryCache, List<LiveStreams> liveStreams, ConfigOptions configOptions, Media media) {
         this.version = version;
         this.secrets = secrets;
         this.channels = channels;
         this.memoryCache = memoryCache;
         this.liveStreams = liveStreams;
         this.configOptions = configOptions;
+        this.media = media;
     }
 
     public double getVersion() { return version; }
@@ -144,8 +145,8 @@ public class Data {
     public ConfigOptions getConfigOptions() { return configOptions; }
     public void setConfigOptions(ConfigOptions configOptions) { this.configOptions = configOptions; }
 
-    public MediaData getData() { return mediaData; }
-    public void setData(MediaData mediaData) { this.mediaData = mediaData; }
+    public Media getMedia() { return media; }
+    public void setData(Media media) { this.media = media; }
 
     public Media getMediaById(String mediaId) {
         if (mediaId == null) return null;

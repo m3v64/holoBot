@@ -19,11 +19,12 @@ import dev.m3v.data.*;
 
 public class Client {
     private static YouTube youTubeClient;
-    private static String apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
+    private static String apiKey;
     private static final String APPLICATION_NAME = "holoBot";
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public static void initialize() throws GeneralSecurityException, IOException {
+        apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         youTubeClient = new YouTube.Builder(httpTransport, JSON_FACTORY, request -> { })
             .setApplicationName(APPLICATION_NAME)
