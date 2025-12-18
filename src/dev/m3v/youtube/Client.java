@@ -25,6 +25,7 @@ public class Client {
 
     public static void initialize() throws GeneralSecurityException, IOException {
         apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
+        System.out.println("Client.initialize: youtube_api_key='" + apiKey + "'");
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         youTubeClient = new YouTube.Builder(httpTransport, JSON_FACTORY, request -> { })
             .setApplicationName(APPLICATION_NAME)
@@ -32,8 +33,9 @@ public class Client {
             .build();
     }
 
-    public static boolean isLoaded() {
-        return youTubeClient != null && apiKey != null;
+    public static Boolean[] isLoaded() {
+        Boolean[] isLoaded = {youTubeClient != null, apiKey != null};
+        return isLoaded;
     }
 
     public static ChannelListResponse getChannel(String channelId) throws IOException {
