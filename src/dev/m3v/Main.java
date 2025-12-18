@@ -93,7 +93,7 @@ public class Main {
         if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return streamIds;
 
         try {
-            for (Channels channel : JsonStorage.get().getChannels()) {
+            for (Channel channel : JsonStorage.get().getChannels()) {
                 String channelId = channel.getChannelId();
                 // streamIds = YoutubeData.checkStream(YoutubeData.getYoutubeData(channelId), channelId);
                 YoutubeData.saveVideos(streamIds, channelId);

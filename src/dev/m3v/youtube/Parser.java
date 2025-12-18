@@ -10,7 +10,7 @@ import dev.m3v.data.model.media.*;
 
 public class Parser {
     public static void saveMedia(VideoListResponse videoListResponse) {
-        Media media = JsonStorage.get().getMedia();
+        Media media = JsonStorage.get().getMemory().getFirst().getMedia();
         MediaData data = media.getData();
         List<Video> Items = videoListResponse.getItems();
 

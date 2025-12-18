@@ -18,7 +18,7 @@ public class UnitTests {
 
         try {
             System.out.println("stuff is loaded: " + Arrays.toString(Client.isLoaded()) + ", " + JsonStorage.isLoaded() + ", " + JsonStorage.get().getSecrets().getYoutube_api_key());
-            // Parser.saveMedia(Client.getVideo("AEb_093KjhM"));
+            Parser.saveMedia(Client.getVideo("AEb_093KjhM"));
         } catch (Exception e) {
             System.err.println("Failed during Test");
             e.printStackTrace();

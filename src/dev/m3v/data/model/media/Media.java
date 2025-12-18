@@ -8,7 +8,7 @@ public class Media {
     private String type;
     private MediaData data;
 
-    public Media() {}
+    public Media() { this.data = new MediaData(); }
     public Media(String channelId, String mediaId, String roleId, String messageId, String type, MediaData data) {
         this.channelId = channelId;
         this.mediaId = mediaId;

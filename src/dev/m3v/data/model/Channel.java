@@ -1,31 +1,13 @@
 package dev.m3v.data.model;
 
-import dev.m3v.data.*;
-
-public class Channels {
+public class Channel {
     private String channelId;
     private int checkQue;
     private int checkCooldown;
     private String roleId;
 
-    public Channels(String channelId) {
-        if (!JsonStorage.isLoaded()) {
-            // error handeling
-        }
-
-        Channels match = JsonStorage.get().getChannels()
-                .stream()
-                .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Channel ID not found: " + channelId));
-
-        this.channelId = match.getChannelId();
-        this.checkQue = match.getCheckQueue();
-        this.checkCooldown = match.getCheckCooldown();
-        this.roleId = match.getRoleId();
-    }
-
-    public Channels(String channelId, int checkQueue, int checkCooldown, String roleId) {
+    public Channel() {}
+    public Channel(String channelId, int checkQueue, int checkCooldown, String roleId) {
         this.channelId = channelId;
         this.checkQue = checkQueue;
         this.checkCooldown = checkCooldown;

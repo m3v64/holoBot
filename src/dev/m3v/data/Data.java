@@ -12,44 +12,20 @@ public class Data {
     
     private double version;
     private Secrets secrets;
-    private List<Channels> channels;
-    private List<Memory> memoryCache;
-    private List<LiveStreams> liveStreams;
     private ConfigOptions configOptions;
-    private Media media; 
+    private List<Channel> channels;
+    private List<Media> memory;
+    private List<Media> liveStreams;
 
-    public Data(double version, Secrets secrets, List<Channels> channels, List<Memory> memoryCache, List<LiveStreams> liveStreams, ConfigOptions configOptions, Media media) {
-        this.version = version;
-        this.secrets = secrets;
-        this.channels = channels;
-        this.memoryCache = memoryCache;
-        this.liveStreams = liveStreams;
-        this.configOptions = configOptions;
-        this.media = media;
-    }
-
-    public double getVersion() { return version; }
-    public void setVersion(double version) { this.version = version; }
-
-    public Secrets getSecrets() { return secrets; }
-    public void setSecrets(Secrets secrets) { this.secrets = secrets; }
-
-    public List<Channels> getChannels() { return channels; }
-
-    public Channels getChannels(String channelId) {
-        if (channels == null) return new Channels(channelId, 0, 0, "");
+    public Channel getChannel(String channelId) {
         return channels.stream()
                 .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
                 .findFirst()
-                .orElse(new Channels(channelId, 0, 0, ""));
+                .orElse(new Channel(channelId, 0, 0, ""));
     }
-    public void setChannels(List<Channels> channels) { this.channels = channels; }
 
-    public Channels setChannels(String channelId, Channels channelData) {
-        if (channelId == null); // implement error handeling 
-        if (this.channels == null) this.channels = new ArrayList<>();
-
-        Channels existing = this.channels.stream()
+    public Channel setChannels(String channelId, Channel channelData) {
+        Channel existing = this.channels.stream()
                 .filter(channel -> channel.getChannelId() != null && channel.getChannelId().equals(channelId))
                 .findFirst()
                 .orElse(null);
@@ -63,111 +39,10 @@ public class Data {
             return existing;
         }
 
-        Channels toAdd = (channelData == null)
-            ? new Channels(channelId, 0, 0, "")
-            : new Channels(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
+        Channel toAdd = (channelData == null)
+            ? new Channel(channelId, 0, 0, "")
+            : new Channel(channelId, channelData.getCheckQueue(), channelData.getCheckCooldown(), channelData.getRoleId());
         this.channels.add(toAdd);
         return toAdd;
-    }
-
-    public Channels setChannels(String channelId) { return setChannels(channelId, null); }
-
-    public List<Memory> getMemoryCache() { return memoryCache; }
-    public void setMemoryCache(List<Memory> Memory) { this.memoryCache = Memory; }
-
-    public Memory setMemoryCache(String channelId, Memory data) {
-        if (channelId == null); // implement error handeling
-        if (this.memoryCache == null) this.memoryCache = new ArrayList<>();
-
-        Memory existing = this.memoryCache.stream()
-                .filter(memory -> memory.getMedia() != null && memory.getMedia().getChannelId() != null && memory.getMedia().getChannelId().equals(channelId))
-                .findFirst()
-                .orElse(null);
-
-        if (existing != null) {
-            if (data != null) {
-                existing.setMedia(data.getMedia());
-            }
-            return existing;
-        }
-
-        Memory toAdd = (data == null) ? new Memory() : new Memory(data.getMedia());
-        this.memoryCache.add(toAdd);
-        return toAdd;
-    }
-
-    public Memory getMemoryCache(String channelId) {
-        if (memoryCache == null) return new Memory();
-        return memoryCache.stream()
-                .filter(memory -> memory.getMedia() != null && memory.getMedia().getChannelId() != null && memory.getMedia().getChannelId().equals(channelId))
-                .findFirst()
-                .orElse(new Memory());
-    }
-
-    public List<Memory> getMemory() { return memoryCache; }
-    public void setMemory(List<Memory> Memory) { this.memoryCache = Memory; }
-    public Memory getMemory(String channelId) { return getMemoryCache(channelId); }
-
-    public Memory setMemory(String channelId, Memory data) { return setMemoryCache(channelId, data); }
-
-    public List<LiveStreams> getLiveStreams() { return liveStreams; }
-    public void setLiveStreams(List<LiveStreams> liveStreams) { this.liveStreams = liveStreams; }
-
-    public LiveStreams setLiveStreams(String channelId, LiveStreams stream) {
-        if (channelId == null); // implement error handeling
-        if (this.liveStreams == null) this.liveStreams = new ArrayList<>();
-
-        LiveStreams existing = this.liveStreams.stream()
-                .filter(l -> l.getMedia() != null && l.getMedia().getChannelId() != null && l.getMedia().getChannelId().equals(channelId))
-                .findFirst()
-                .orElse(null);
-
-        if (existing != null) {
-            if (stream != null) {
-                existing.setMedia(stream.getMedia());
-            }
-            return existing;
-        }
-
-        LiveStreams toAdd = (stream == null) ? new LiveStreams() : new LiveStreams(stream.getMedia());
-        this.liveStreams.add(toAdd);
-        return toAdd;
-    }
-
-    public LiveStreams getLiveStreams(String channelId) {
-        if (liveStreams == null) return new LiveStreams();
-        return liveStreams.stream()
-                .filter(l -> l.getMedia() != null && l.getMedia().getChannelId() != null && l.getMedia().getChannelId().equals(channelId))
-                .findFirst()
-                .orElse(new LiveStreams());
-    }
-
-    public ConfigOptions getConfigOptions() { return configOptions; }
-    public void setConfigOptions(ConfigOptions configOptions) { this.configOptions = configOptions; }
-
-    public Media getMedia() { return media; }
-    public void setData(Media media) { this.media = media; }
-
-    public Media getMediaById(String mediaId) {
-        if (mediaId == null) return null;
-        
-        if (memoryCache != null) {
-            Media media = memoryCache.stream()
-                .map(Memory::getMedia)
-                .filter(m -> m != null && mediaId.equals(m.getMediaId()))
-                .findFirst()
-                .orElse(null);
-            if (media != null) return media;
-        }
-        
-        if (liveStreams != null) {
-            return liveStreams.stream()
-                .map(LiveStreams::getMedia)
-                .filter(m -> m != null && mediaId.equals(m.getMediaId()))
-                .findFirst()
-                .orElse(null);
-        }
-        
-        return null;
     }
 }
