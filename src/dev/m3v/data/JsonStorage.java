@@ -4,11 +4,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.io.FileWriter;
-import java.util.ArrayList;
 
 import com.google.gson.*;
-
-import dev.m3v.data.model.*;
 
 public class JsonStorage {
     private static final String PATH = "data/data.json";
@@ -37,7 +34,7 @@ public class JsonStorage {
                 e.printStackTrace();
                 return null;
             }
-            Data.instance = new Data(1.0, new Secrets(), new ArrayList<Channel>(), new ArrayList<Memory>(), new ArrayList<LiveStreams>(), new ConfigOptions());
+            Data.instance = new Data();
             return Data.instance;
         }
 
@@ -55,22 +52,22 @@ public class JsonStorage {
             } catch (JsonSyntaxException jse) {
                 System.err.println("JsonStorage.load: JSON parse failed: " + jse.getMessage());
                 jse.printStackTrace();
-                Data.instance = new Data(1.0, new Secrets(), new ArrayList<Channel>(), new ArrayList<Memory>(), new ArrayList<LiveStreams>(), new ConfigOptions());
+                Data.instance = new Data();
             }
             if (Data.instance == null) {
-                Data.instance = new Data(1.0, new Secrets(), new ArrayList<Channel>(), new ArrayList<Memory>(), new ArrayList<LiveStreams>(), new ConfigOptions());
+                Data.instance = new Data();
             }
             return Data.instance;
         } catch (Exception e) {
             System.err.println("JsonStorage.load: unexpected error reading file: " + e.getMessage());
             e.printStackTrace();
-            Data.instance = new Data(1.0, new Secrets(), new ArrayList<Channel>(), new ArrayList<Memory>(), new ArrayList<LiveStreams>(), new ConfigOptions());
+            Data.instance = new Data();
             return Data.instance;
         }
     }
 
     public static void save() {
-        Data data = Data.instance == null ? new Data(1.0, new Secrets(), new ArrayList<Channel>(), new ArrayList<Memory>(), new ArrayList<LiveStreams>(), new ConfigOptions()) : Data.instance;
+        Data data = Data.instance == null ? new Data() : Data.instance;
         try (FileWriter writer = new FileWriter(PATH)) {
             gson.toJson(data, writer);
         } catch (Exception FileNotFoundException ) {

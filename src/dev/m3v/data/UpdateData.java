@@ -12,8 +12,8 @@ public class UpdateData {
         int size = channels.size();
         boolean bumped = false;
         for (Channel channel : channels) {
-            if (channel.getCheckQueue() == 1) {
-                channel.setCheckQueue(size + 1);
+            if (channel.getCheckQue() == 1) {
+                channel.setCheckQue(size + 1);
                 bumped = true;
                 break;
             }
@@ -22,13 +22,13 @@ public class UpdateData {
         if (!bumped) {
             Channel min = null;
             for (Channel channel : channels) {
-                if (min == null || channel.getCheckQueue() < min.getCheckQueue()) min = channel;
+                if (min == null || channel.getCheckQue() < min.getCheckQue()) min = channel;
             }
-            if (min != null) min.setCheckQueue(size + 1);
+            if (min != null) min.setCheckQue(size + 1);
         }
 
         for (Channel channel : channels) {
-            channel.setCheckQueue(channel.getCheckQueue() - 1);
+            channel.setCheckQue(channel.getCheckQue() - 1);
         }
 
         JsonStorage.save();
@@ -59,7 +59,7 @@ public class UpdateData {
 
         Channel min = null;
         for (Channel channel : channels) {
-            if (min == null || channel.getCheckQueue() < min.getCheckQueue()) min = channel;
+            if (min == null || channel.getCheckQue() < min.getCheckQue()) min = channel;
         }
 
         if (min != null) return min.getChannelId();

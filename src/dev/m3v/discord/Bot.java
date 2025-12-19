@@ -8,9 +8,7 @@ import java.util.Objects;
 import javax.security.auth.login.LoginException;
 
 import dev.m3v.data.*;
-import dev.m3v.data.model.LiveStreams;
-import dev.m3v.data.model.Memory;
-import dev.m3v.data.model.media.*;
+import dev.m3v.data.model.*;
 
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -39,7 +37,7 @@ public class Bot {
                 EmbedBuilder streamEmbed = EmbedTemplates.createStreamEmbed(media.getData());
                 MessageChannel streamChannel = jdaClient.getTextChannelById(streamChannelId);
                 if (streamChannel == null || streamChannelId == null) return;
-                String streamRoleId = Objects.requireNonNull(JsonStorage.get().getChannels(media.getChannelId()).getRoleId(), "roleId must not be null");
+                String streamRoleId = Objects.requireNonNull(JsonStorage.get().getChannel(media.getChannelId()).getRoleId(), "roleId must not be null");
                 String streamMention = "<@&" + streamRoleId + ">";
                 streamChannel.sendMessage(streamMention).queue();
                 streamChannel.sendMessageEmbeds(streamEmbed.build()).queue(
@@ -51,7 +49,7 @@ public class Bot {
                 EmbedBuilder vodEmbed = EmbedTemplates.createVodEmbed(media.getData());
                 MessageChannel vodChannel = jdaClient.getTextChannelById(mediaChannelId);
                 if (vodChannel == null || mediaChannelId == null) return;
-                String vodRoleId = Objects.requireNonNull(JsonStorage.get().getChannels(media.getChannelId()).getRoleId(), "roleId must not be null");
+                String vodRoleId = Objects.requireNonNull(JsonStorage.get().getChannel(media.getChannelId()).getRoleId(), "roleId must not be null");
                 String vodMention = "<@&" + vodRoleId + ">";
                 vodChannel.sendMessage(vodMention).queue();
                 vodChannel.sendMessageEmbeds(vodEmbed.build()).queue(
@@ -63,7 +61,7 @@ public class Bot {
                 EmbedBuilder premierEmbed = EmbedTemplates.createPremierEmbed(media.getData());
                 MessageChannel premierChannel = jdaClient.getTextChannelById(premierChannelId);
                 if (premierChannel == null || premierChannelId == null) return;
-                String premierRoleId = Objects.requireNonNull(JsonStorage.get().getChannels(media.getChannelId()).getRoleId(), "roleId must not be null");
+                String premierRoleId = Objects.requireNonNull(JsonStorage.get().getChannel(media.getChannelId()).getRoleId(), "roleId must not be null");
                 String premierMention = "<@&" + premierRoleId + ">";
                 premierChannel.sendMessage(premierMention).queue();
                 premierChannel.sendMessageEmbeds(premierEmbed.build()).queue(
@@ -75,7 +73,7 @@ public class Bot {
                 EmbedBuilder videoEmbed = EmbedTemplates.createVideoEmbed(media.getData());
                 MessageChannel videoChannel = jdaClient.getTextChannelById(mediaChannelId);
                 if (videoChannel == null || mediaChannelId == null) return;
-                String videoRoleId = Objects.requireNonNull(JsonStorage.get().getChannels(media.getChannelId()).getRoleId(), "roleId must not be null");
+                String videoRoleId = Objects.requireNonNull(JsonStorage.get().getChannel(media.getChannelId()).getRoleId(), "roleId must not be null");
                 String videoMention = "<@&" + videoRoleId + ">";
                 videoChannel.sendMessage(videoMention).queue();
                 videoChannel.sendMessageEmbeds(videoEmbed.build()).queue(
@@ -114,11 +112,11 @@ public class Bot {
         if (mediaId == null || messageId == null) return;
         boolean updated = false;
 
-        List<Memory> checks = JsonStorage.get().getMemoryCache();
+        List<Media> checks = JsonStorage.get().getMemory();
         if (checks != null) {
-            for (Memory cd : checks) {
-                if (cd != null && mediaId.equals(cd.getMedia().getMediaId())) {
-                    cd.getMedia().setMessageId(messageId);
+            for (Media cd : checks) {
+                if (cd != null && mediaId.equals(cd.getMediaId())) {
+                    cd.setMessageId(messageId);
                     updated = true;
                     break;
                 }
@@ -126,11 +124,11 @@ public class Bot {
         }
 
         if (!updated) {
-            List<LiveStreams> lives = JsonStorage.get().getLiveStreams();
+            List<Media> lives = JsonStorage.get().getLiveStreams();
             if (lives != null) {
-                for (LiveStreams ls : lives) {
-                    if (ls != null && mediaId.equals(ls.getMedia().getMediaId())) {
-                        ls.getMedia().setMessageId(messageId);
+                for (Media ls : lives) {
+                    if (ls != null && mediaId.equals(ls.getMediaId())) {
+                        ls.setMessageId(messageId);
                         updated = true;
                         break;
                     }

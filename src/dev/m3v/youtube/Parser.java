@@ -6,11 +6,11 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 import dev.m3v.data.JsonStorage;
-import dev.m3v.data.model.media.*;
+import dev.m3v.data.model.*;
 
 public class Parser {
     public static void saveMedia(VideoListResponse videoListResponse) {
-        Media media = JsonStorage.get().getMemory().getFirst().getMedia();
+        Media media = JsonStorage.get().getMemory().getFirst();
         MediaData data = media.getData();
         List<Video> Items = videoListResponse.getItems();
 

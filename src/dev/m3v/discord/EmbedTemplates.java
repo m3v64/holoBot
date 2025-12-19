@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import dev.m3v.data.model.media.*;
+import dev.m3v.data.model.*;
 
 public class EmbedTemplates {
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

@@ -5,24 +5,53 @@ public class Channel {
     private int checkQue;
     private int checkCooldown;
     private String roleId;
-
-    public Channel() {}
-    public Channel(String channelId, int checkQueue, int checkCooldown, String roleId) {
+    private channelSettings settings;
+    
+    public Channel(String channelId, int checkQue, int checkCooldown, String roleId, channelSettings settings) {
         this.channelId = channelId;
-        this.checkQue = checkQueue;
+        this.checkQue = checkQue;
         this.checkCooldown = checkCooldown;
+        this.roleId = roleId;
+        this.settings = settings;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public int getCheckQue() {
+        return checkQue;
+    }
+
+    public void setCheckQue(int checkQue) {
+        this.checkQue = checkQue;
+    }
+
+    public int getCheckCooldown() {
+        return checkCooldown;
+    }
+
+    public void setCheckCooldown(int checkCooldown) {
+        this.checkCooldown = checkCooldown;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
         this.roleId = roleId;
     }
 
-    public String getChannelId() { return channelId; }
-    public void setChannelId(String channelId) { this.channelId = channelId; }
+    public channelSettings getSettings() {
+        return settings;
+    }
 
-    public int getCheckQueue() { return checkQue; }
-    public void setCheckQueue(int checkQueue) { this.checkQue = checkQueue; }
-
-    public int getCheckCooldown() { return checkCooldown; }
-    public void setCheckCooldown(int checkCooldown) { this.checkCooldown = checkCooldown; }
-
-    public String getRoleId() { return roleId; }
-    public void setRoleId(String roleId) { this.roleId = roleId; }
+    public void setSettings(channelSettings settings) {
+        this.settings = settings;
+    }
 }
