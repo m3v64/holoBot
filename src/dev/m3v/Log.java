@@ -51,7 +51,7 @@ public class Log {
                     """);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Main.shutdown(null);
+                    Main.shutdown(null, 1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,20 +83,20 @@ public class Log {
         }
     }
 
-    public static void error(Class<?> location, String message, Throwable t) {
+    public static void error(String message, Class<?> location, Throwable t) {
         log("ERROR", message, location, t);
     }
 
-    public static void warn(Class<?> location, String message, Throwable t) {
+    public static void warn(String message, Class<?> location, Throwable t) {
         log("WARN", message, location, t);
     }
 
-    public static void info(Class<?> location, String message, Object... args) {
+    public static void info(String message, Class<?> location, Object... args) {
         Logger logger = LoggerFactory.getLogger(location);
         logger.info(message, args);
     }
 
-    public static void debug(Class<?> location, String message, Object... args) {
+    public static void debug(String message, Class<?> location, Object... args) {
         Logger logger = LoggerFactory.getLogger(location);
         logger.debug(message, args);
     }

@@ -13,9 +13,9 @@ public class Main {
             try {
                 UnitTests.test();
             } catch (Exception e) {
-                Log.log("ERROR", "Test threw an exception", Main.class, e);
+                Log.error("Unit test threw an exception", Main.class, e);
             }
-            System.exit(0);
+            shutdown(null, 0);
         }
 
         try {
@@ -24,8 +24,8 @@ public class Main {
             Bot.initiateBot();
             Client.initialize();
         } catch (Exception e) {
-            e.printStackTrace();
-            shutdown(null);
+            Log.error("Holobot failed to initialize", Main.class, e);
+            shutdown(null, 1);
         }
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -35,12 +35,12 @@ public class Main {
         }, 0, 60, TimeUnit.SECONDS);
 
         Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-            Log.log("ERROR", ("Uncaught exception in thread " + thread.getName()), Main.class, e);
-            shutdown(scheduler);
+            Log.error(("Uncaught exception in thread " + thread.getName()), Main.class, e);
+            shutdown(scheduler, 1);
         });
     }
 
-    public static void shutdown(ScheduledExecutorService scheduler) {
+    public static void shutdown(ScheduledExecutorService scheduler, Integer exitCode) {
         Runnable cleanup = () -> {
             try {
                 if (scheduler != null) {
@@ -54,19 +54,19 @@ public class Main {
                     }
                 }
             } catch (Exception ignored) {
-                Log.log("WARN", "Scheduler shutdown command was ignored, scheduler is likely not initialized", Main.class, ignored);
+                Log.warn("Scheduler shutdown command was ignored, scheduler is likely not initialized", Main.class, ignored);
             }
 
             try {
                 JsonStorage.save();
             } catch (Exception ignored) {
-                Log.log("ERROR", "Save Json command was ignored", Main.class, ignored);
+                Log.error("Save Json command was ignored", Main.class, ignored);
             }
 
             try {
                 dev.m3v.discord.Bot.shutdown();
             } catch (Exception ignored) {
-                Log.log("WARN", "Bot shutdown command was ignored, Bot is likely not initialized", Main.class, ignored);
+                Log.warn("Bot shutdown command was ignored, Bot is likely not initialized", Main.class, ignored);
             }
         };
 
@@ -75,7 +75,8 @@ public class Main {
         }
 
         cleanup.run();
-        Log.log("ERROR", "Failed to shutdown cleanly, forcing shutdown", Main.class, null);
-        System.exit(1);
+        Log.warn("Failed to shutdown cleanly, forcing shutdown", Main.class, null);
+        if (exitCode != null) System.exit(exitCode);
+        else System.exit(1);
     }
 }

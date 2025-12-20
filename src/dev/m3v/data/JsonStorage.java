@@ -1,11 +1,14 @@
 package dev.m3v.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.io.FileWriter;
 
 import com.google.gson.*;
+
+import dev.m3v.Log;
 
 public class JsonStorage {
     private static final String PATH = "data/data.json";
@@ -13,18 +16,13 @@ public class JsonStorage {
 
     public static Data load() {
         File file = new File(PATH);
-        if (file.getParentFile() != null && file.getParentFile().exists()) {
-            String[] list = file.getParentFile().list();
-            if (list != null) for (String f : list) System.out.println(" - " + f);
-        } else {
-            System.out.println("JsonStorage.load: parent directory does not exist: " + (file.getParentFile() == null ? "(null)" : file.getParentFile().getAbsolutePath()));
-        }
 
         if (!file.exists()) {
+            Log.warn("Data json file does not exist, creating now...", JsonStorage.class, null);
             try {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
-                System.out.println("JsonStorage.load: created new file at " + file.getAbsolutePath());
+                Log.info(("Created Json file at" + file.getAbsolutePath()), JsonStorage.class);
             } catch (Exception e) {
                 System.err.println("JsonStorage.load: failed to create new file: " + e.getMessage());
                 e.printStackTrace();
@@ -36,8 +34,6 @@ public class JsonStorage {
 
         try {
             String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-            System.out.println("JsonStorage.load: file content length=" + content.length());
-            System.out.println("JsonStorage.load: content preview: " + (content.length() > 200 ? content.substring(0,200) + "..." : content));
             try {
                 Data.instance = gson.fromJson(content, Data.class);
                 if (Data.instance != null && Data.instance.getSecrets() != null) {
@@ -46,9 +42,7 @@ public class JsonStorage {
                     System.out.println("JsonStorage.load: Data.instance or secrets is null after parse");
                 }
             } catch (JsonSyntaxException jse) {
-                System.err.println("JsonStorage.load: JSON parse failed: " + jse.getMessage());
-                jse.printStackTrace();
-                Data.instance = new Data();
+               
             }
             if (Data.instance == null) {
                 Data.instance = new Data();
