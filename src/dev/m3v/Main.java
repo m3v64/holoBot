@@ -1,108 +1,81 @@
 package dev.m3v;
 
-// import java.util.concurrent.*;
-// import dev.m3v.discord.*;
-// import dev.m3v.data.*;
-// import dev.m3v.data.model.*;
-
-// import java.util.List;
-// import java.util.ArrayList;
+import java.util.concurrent.*;
+import dev.m3v.discord.*;
+import dev.m3v.youtube.*;
+import dev.m3v.data.*;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+        boolean dev_mode = true;
 
-        UnitTests.test();
+        if (dev_mode) {
+            try {
+                UnitTests.test();
+            } catch (Exception e) {
+                Log.log("ERROR", "Test threw an exception", Main.class, e);
+            }
+            System.exit(0);
+        }
 
-        // System.out.println("Starting holoBot...");
-        // try {
-        //     JsonStorage.load();
-        //     Bot.initiateBot();
-        //     YoutubeData.initialize();
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        //     System.err.println("Failed to initialize holoBot. Exiting.");
-        //     System.exit(1);
-        // }
+        try {
+            Log.load();
+            JsonStorage.load();
+            Bot.initiateBot();
+            Client.initialize();
+        } catch (Exception e) {
+            e.printStackTrace();
+            shutdown(null);
+        }
 
-        // ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        // Runnable checkYouTubeTask = () -> {
-        //     try {
-        //         checkStreamData();
-        //         update(true);
-        //     } catch (Exception e) {
-        //         Bot.sendError("Main check task loop", null, e);
-        //     }
-        // };
+        scheduler.scheduleAtFixedRate(() -> {
 
-        // scheduler.scheduleAtFixedRate(checkYouTubeTask, 0, 60, TimeUnit.SECONDS);
+        }, 0, 60, TimeUnit.SECONDS);
 
-        // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        //     System.out.println("Shutting down holoBot...");
-        //     scheduler.shutdown();
-        //     try {
-        //         if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-        //             scheduler.shutdownNow();
-        //         }
-        //     } catch (InterruptedException e) {
-        //         scheduler.shutdownNow();
-        //     }
-        // }));
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
+            Log.log("ERROR", ("Uncaught exception in thread " + thread.getName()), Main.class, e);
+            shutdown(scheduler);
+        });
     }
 
-    // private static void update(boolean post) {
-    //     if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return;
+    public static void shutdown(ScheduledExecutorService scheduler) {
+        Runnable cleanup = () -> {
+            try {
+                if (scheduler != null) {
+                    scheduler.shutdown();
+                    try {
+                        if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                            scheduler.shutdownNow();
+                        }
+                    } catch (InterruptedException e) {
+                        scheduler.shutdownNow();
+                    }
+                }
+            } catch (Exception ignored) {
+                Log.log("WARN", "Scheduler shutdown command was ignored, scheduler is likely not initialized", Main.class, ignored);
+            }
 
-    //     try {
-    //         List<String> newVideoIds = checkData();
-    //         List<Media> newVideoMedia = new ArrayList<>();
+            try {
+                JsonStorage.save();
+            } catch (Exception ignored) {
+                Log.log("ERROR", "Save Json command was ignored", Main.class, ignored);
+            }
 
-    //         for (String videoId : newVideoIds) {
-    //             newVideoMedia.add(JsonStorage.get().getMedia(videoId));
-    //         }
-    //         for (Media media : newVideoMedia) {
-    //             if (post && !newVideoIds.isEmpty()) Bot.sendEmbed(media);
-    //         }
+            try {
+                dev.m3v.discord.Bot.shutdown();
+            } catch (Exception ignored) {
+                Log.log("WARN", "Bot shutdown command was ignored, Bot is likely not initialized", Main.class, ignored);
+            }
+        };
 
-    //         // List<String> StreamIds = checkStreamData();
-    //         // Discord.updateMessage(); // finish this method if needed
-    //     } catch (Exception e) {
-    //         System.err.println(e);
-    //     }
-    // }
+        if (scheduler != null) {
+            Runtime.getRuntime().addShutdownHook(new Thread(cleanup));
+        }
 
-    // private static List<String> checkData() {
-    //     List<String> newVideoIds = new ArrayList<>();
-    //     if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return newVideoIds;
-
-    //     try {
-    //         String lowestId = UpdateData.getLowestChannelId();
-    //         if (lowestId == null) return newVideoIds;
-    //         newVideoIds = YoutubeData.check(YoutubeData.getYoutubeData(lowestId), lowestId);
-    //         YoutubeData.saveVideos(newVideoIds, lowestId);
-    //         UpdateData.updateQueAndCooldown();
-    //         return newVideoIds;
-    //     } catch (Exception e) {
-    //         System.err.println(e);
-    //         return newVideoIds;
-    //     }
-    // }
-
-    // private static List<String> checkStreamData() {
-    //     List<String> streamIds = new ArrayList<>();
-    //     if (!JsonStorage.isLoaded() || !YoutubeData.isLoaded() || !Bot.isLoaded()) return streamIds;
-
-    //     try {
-    //         for (Channel channel : JsonStorage.get().getChannels()) {
-    //             String channelId = channel.getChannelId();
-    //             // streamIds = YoutubeData.checkStream(YoutubeData.getYoutubeData(channelId), channelId);
-    //             YoutubeData.saveVideos(streamIds, channelId);
-    //             UpdateData.updateQueAndCooldown();
-    //         }
-    //     } catch (Exception e) {
-    //         System.err.println(e);
-    //         return streamIds;
-    //     }
-    //     return streamIds;
-    // }
+        cleanup.run();
+        Log.log("ERROR", "Failed to shutdown cleanly, forcing shutdown", Main.class, null);
+        System.exit(1);
+    }
 }

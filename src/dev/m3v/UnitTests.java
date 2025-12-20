@@ -8,6 +8,7 @@ import dev.m3v.youtube.*;
 public class UnitTests {
     public static void test() {
         try {
+            Log.load();
             JsonStorage.load();
             Client.initialize();
         } catch (Exception e) {

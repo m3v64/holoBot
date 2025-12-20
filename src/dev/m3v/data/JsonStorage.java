@@ -12,12 +12,8 @@ public class JsonStorage {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public static Data load() {
-        System.out.println("JsonStorage.load: user.dir='" + System.getProperty("user.dir") + "'");
         File file = new File(PATH);
-        System.out.println("JsonStorage.load: attempted path=" + file.getAbsolutePath());
-        System.out.println("JsonStorage.load: exists=" + file.exists() + ", isFile=" + file.isFile() + ", length=" + (file.exists() ? file.length() : -1L));
         if (file.getParentFile() != null && file.getParentFile().exists()) {
-            System.out.println("JsonStorage.load: parent exists; listing files:");
             String[] list = file.getParentFile().list();
             if (list != null) for (String f : list) System.out.println(" - " + f);
         } else {

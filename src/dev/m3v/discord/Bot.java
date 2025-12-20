@@ -22,6 +22,16 @@ public class Bot {
         jdaClient.awaitReady();
     }
 
+    public static void shutdown() {
+        if (jdaClient != null) {
+            try {
+                jdaClient.shutdown();
+            } catch (Exception ignored) {
+            }
+            jdaClient = null;
+        }
+    }
+
     public static boolean isLoaded() {
         return jdaClient != null;
     }
