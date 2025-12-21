@@ -10,7 +10,7 @@ public class UpdateData {
         Log.debug("Updating channel queue", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
         if (channels == null || channels.isEmpty()) {
-            Log.warn("No channels to update in queue", UpdateData.class, null);
+            Log.info("No channels to update in queue", UpdateData.class);
             return;
         }
 
@@ -43,7 +43,7 @@ public class UpdateData {
         Log.debug("Updating channel cooldowns", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
         if (channels == null || channels.isEmpty()) {
-            Log.warn("No channels to update cooldown", UpdateData.class, null);
+            Log.info("No channels to update cooldown", UpdateData.class);
             return;
         }
 
@@ -66,7 +66,7 @@ public class UpdateData {
         Log.debug("Getting lowest channel ID from queue", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
         if (channels == null || channels.isEmpty()) {
-            Log.warn("No channels available to get lowest ID", UpdateData.class, null);
+            Log.info("No channels available to get lowest ID", UpdateData.class);
             return null;
         }
 

@@ -43,14 +43,14 @@ public class Bot {
 
     public static void sendEmbed(Media media) {
         if (media == null) {
-            Log.warn("sendEmbed called with null media", Bot.class, null);
+            Log.info("sendEmbed called with null media", Bot.class);
             return;
         }
         String mediaChannelId = JsonStorage.get().getConfigOptions().getMediaChannelId();
         String streamChannelId = JsonStorage.get().getConfigOptions().getStreamChannelId();
         String premierChannelId = JsonStorage.get().getConfigOptions().getPremierChannelId();
         if (mediaChannelId == null || streamChannelId == null || premierChannelId == null) {
-            Log.warn("Channel IDs not configured properly", Bot.class, null);
+            Log.info("Channel IDs not configured properly", Bot.class);
             return;
         }
         switch (media.getType()) {
@@ -107,7 +107,7 @@ public class Bot {
                 );
                 break;
             default:
-                Log.warn("Unknown media type", Bot.class, new IllegalArgumentException("Media type: " + media.getType()));
+                Log.info("Unknown media type: {}", Bot.class, media.getType());
                 sendError("sendEmbed", "no type was found", null);
                 break;
         }
