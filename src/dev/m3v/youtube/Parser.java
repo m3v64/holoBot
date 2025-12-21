@@ -7,14 +7,17 @@ import com.google.api.services.youtube.model.VideoListResponse;
 
 import dev.m3v.data.JsonStorage;
 import dev.m3v.data.model.*;
+import dev.m3v.Log;
 
 public class Parser {
     public static void saveMedia(VideoListResponse videoListResponse) {
+        Log.debug("Parsing video list response", Parser.class);
         Media media = JsonStorage.get().getMemory().getFirst();
         MediaData data = media.getData();
         List<Video> Items = videoListResponse.getItems();
 
         for (Video video : Items) {
+            Log.info("Processing video: {}", Parser.class, video.getId());
             media.setChannelId(video.getSnippet().getChannelId());
             media.setMediaId(video.getId());
             media.setType(video.getKind());
@@ -53,6 +56,7 @@ public class Parser {
             media.setData(data);
         }
 
+        Log.debug("Saving media data to storage", Parser.class);
         JsonStorage.save();
     }
 }
