@@ -1,86 +1,128 @@
 package dev.m3v.data;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.io.FileWriter;
+import java.nio.file.*;
+import java.io.IOException;
 
 import com.google.gson.*;
 
 import dev.m3v.Log;
+import dev.m3v.Main;
 
 public class JsonStorage {
-    private static final String PATH = "data/data.json";
+    private static Path PATH = Paths.get("data", "data.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static Data load() {
-        File file = new File(PATH);
-
-        if (!file.exists()) {
-            Log.warn("Data json file does not exist, creating now...", JsonStorage.class, null);
-            try {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-                Log.info(("Created Json file at" + file.getAbsolutePath()), JsonStorage.class);
-            } catch (Exception e) {
-                System.err.println("JsonStorage.load: failed to create new file: " + e.getMessage());
-                e.printStackTrace();
-                return null;
-            }
-            Data.instance = new Data();
-            return Data.instance;
+    public synchronized static void setPath(String path) {
+        try {
+            PATH = Paths.get(path);
+        } catch (Exception e) {
+            Log.warn("Failed to set path", JsonStorage.class, e);
         }
+    }
+
+    public synchronized static void load() {
+        Path file = PATH;
+        Data current = Data.instance == null ? new Data() : Data.instance;
 
         try {
-            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-            try {
-                Data.instance = gson.fromJson(content, Data.class);
-                if (Data.instance != null && Data.instance.getSecrets() != null) {
-                    System.out.println("JsonStorage.load: loaded youtube_api_key='" + Data.instance.getSecrets().getYoutube_api_key() + "'");
-                } else {
-                    System.out.println("JsonStorage.load: Data.instance or secrets is null after parse");
+            if (Files.notExists(file)) {
+                Log.warn("Data json file does not exist, creating now...", JsonStorage.class, null);
+                try {
+                    if (file.getParent() != null) {
+                        Files.createDirectories(file.getParent());
+                    }
+                    String json = gson.toJson(current);
+                    try {
+                        Files.write(file, json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
+                        Log.info("Created Json file at " + file.toAbsolutePath(), JsonStorage.class);
+                    } catch (FileAlreadyExistsException e) {
+                        Log.info("Json file was created concurrently: " + file.toAbsolutePath(), JsonStorage.class);
+                    }
+                } catch (IOException e) {
+                    Log.error("Failed to create json file", JsonStorage.class, e);
+                    Main.shutdown(null, 1);
+                    return;
                 }
-            } catch (JsonSyntaxException jse) {
-               
             }
-            if (Data.instance == null) {
-                Data.instance = new Data();
-            }
-            return Data.instance;
-        } catch (Exception e) {
-            System.err.println("JsonStorage.load: unexpected error reading file: " + e.getMessage());
-            e.printStackTrace();
-            Data.instance = new Data();
-            return Data.instance;
-        }
-    }
 
-    public static void save() {
-        Data data = Data.instance == null ? new Data() : Data.instance;
-        try (FileWriter writer = new FileWriter(PATH)) {
-            gson.toJson(data, writer);
-        } catch (Exception FileNotFoundException ) {
-            File file = new File(PATH);
+            long size = Files.size(file);
+            if (size == 0) {
+                Data.instance = current;
+                return;
+            }
+
+            final String content;
             try {
-                file.createNewFile();
-                FileWriter writer = new FileWriter(PATH);
-                gson.toJson(data, writer);
-            } catch (Exception e) {
-                System.err.println("something gone wrong wrong ln 84 JsonStorage");
+                content = Files.readString(file, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                Log.error("Could not read data from the Json file", JsonStorage.class, e);
+                Main.shutdown(null, 1);
+                return;
             }
+
+            try {
+                Data parsed = gson.fromJson(content, Data.class);
+                if (parsed != null) {
+                    Data.instance = parsed;
+                } else {
+                    Log.warn("Parsed JSON was null; keeping existing data instance", JsonStorage.class, null);
+                    Data.instance = current;
+                }
+            } catch (JsonParseException e) {
+                Log.error("Failed to parse JSON - cannot continue", JsonStorage.class, e);
+                Main.shutdown(null, 1);
+                return;
+            }
+        } catch (IOException e) {
+            Log.error("I/O error while loading JSON file", JsonStorage.class, e);
+            Main.shutdown(null, 1);
+        } catch (Exception e) {
+            Log.error("Exception while loading Json data", JsonStorage.class, e);
+            Main.shutdown(null, 1);
         }
     }
 
-    public static Data get() {
+    public synchronized static void save() {
+        Data data = Data.instance == null ? new Data() : Data.instance;
+        Path file = PATH;
+        try {
+            if (file.getParent() != null) {
+                Files.createDirectories(file.getParent());
+            }
+
+            String json = gson.toJson(data);
+            Path temp = Files.createTempFile(file.getParent(), "data", ".tmp");
+            Files.writeString(temp, json, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+
+            if (Files.exists(file)) {
+                Path backup = file.resolveSibling(file.getFileName().toString() + "." + System.currentTimeMillis() + ".bak");
+                try {
+                    Files.copy(file, backup, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    Log.warn("Failed to create backup file: " + backup, JsonStorage.class, e);
+                }
+            }
+
+            try {
+                Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            Log.error("Saving Json data failed", JsonStorage.class, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public synchronized static Data get() {
         if (Data.instance == null) {
-            System.err.println("Data instance isnt initialized yet");
-            System.exit(1);
+            Log.error("Data class isnt initialized", JsonStorage.class, null);
         }
         return Data.instance;
     }
 
-    public static boolean isLoaded() {
+    public synchronized static boolean isLoaded() {
         return Data.instance != null;
     }
 }
