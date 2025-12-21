@@ -16,6 +16,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.SearchListResponse;
 
 import dev.m3v.data.*;
+import dev.m3v.Log;
 
 public class Client {
     private static YouTube youTubeClient;
@@ -25,7 +26,7 @@ public class Client {
 
     public static void initialize() throws GeneralSecurityException, IOException {
         apiKey = JsonStorage.get().getSecrets().getYoutube_api_key();
-        System.out.println("Client.initialize: youtube_api_key='" + apiKey + "'");
+        Log.info("Client.initialize: youtube_api_key='{}'", Client.class, apiKey);
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         youTubeClient = new YouTube.Builder(httpTransport, JSON_FACTORY, request -> {})
             .setApplicationName(APPLICATION_NAME)

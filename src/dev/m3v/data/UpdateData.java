@@ -3,11 +3,16 @@ package dev.m3v.data;
 import java.util.List;
 
 import dev.m3v.data.model.*;
+import dev.m3v.Log;
 
 public class UpdateData {
     public static void updateQueue() {
+        Log.debug("Updating channel queue", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
-        if (channels == null || channels.isEmpty()) return;
+        if (channels == null || channels.isEmpty()) {
+            Log.info("No channels to update in queue", UpdateData.class);
+            return;
+        }
 
         int size = channels.size();
         boolean bumped = false;
@@ -35,8 +40,12 @@ public class UpdateData {
     }
 
     public static void updateCooldown() {
+        Log.debug("Updating channel cooldowns", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
-        if (channels == null || channels.isEmpty()) return;
+        if (channels == null || channels.isEmpty()) {
+            Log.info("No channels to update cooldown", UpdateData.class);
+            return;
+        }
 
         for (Channel channel : channels) {
             int cooldown = channel.getCheckCooldown();
@@ -54,8 +63,12 @@ public class UpdateData {
     }
 
     public static String getLowestChannelId() {
+        Log.debug("Getting lowest channel ID from queue", UpdateData.class);
         List<Channel> channels = JsonStorage.get().getChannels();
-        if (channels == null || channels.isEmpty()) return null;
+        if (channels == null || channels.isEmpty()) {
+            Log.info("No channels available to get lowest ID", UpdateData.class);
+            return null;
+        }
 
         Channel min = null;
         for (Channel channel : channels) {

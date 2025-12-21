@@ -15,7 +15,7 @@ public class UnitTests {
         }
 
         try {
-            System.out.println("stuff is loaded: " + Client.isLoaded() + ", " + JsonStorage.isLoaded());
+            Log.info("stuff is loaded: {}, {}", UnitTests.class, Client.isLoaded(), JsonStorage.isLoaded());
             Parser.saveMedia(Client.getVideo("AEb_093KjhM"));
         } catch (Exception e) {
             Log.log("WARN", "Unit test failed", UnitTests.class, e);
