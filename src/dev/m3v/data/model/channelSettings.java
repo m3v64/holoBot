@@ -1,22 +1,14 @@
 package dev.m3v.data.model;
 
-public class channelSettings {
-    private int checkIntervalSeconds;
+public class ChannelSettings {
     private int channelCooldownMinutes;
     private int saveLimit;
 
-    public channelSettings(int checkIntervalSeconds, int channelCooldownMinutes, int saveLimit) {
-        this.checkIntervalSeconds = checkIntervalSeconds;
+    public ChannelSettings(int channelCooldownMinutes, int saveLimit) {
         this.channelCooldownMinutes = channelCooldownMinutes;
         this.saveLimit = saveLimit;
     }
     
-    public int getCheckIntervalSeconds() {
-        return checkIntervalSeconds;
-    }
-    public void setCheckIntervalSeconds(int checkIntervalSeconds) {
-        this.checkIntervalSeconds = checkIntervalSeconds;
-    }
     public int getChannelCooldownMinutes() {
         return channelCooldownMinutes;
     }

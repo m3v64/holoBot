@@ -2,7 +2,9 @@ package dev.m3v.data;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.nio.file.attribute.FileTime;
 import java.io.IOException;
+import java.util.*;
 
 import com.google.gson.*;
 
@@ -101,6 +103,33 @@ public class JsonStorage {
                     Files.copy(file, backup, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     Log.warn("Failed to create backup file: " + backup, JsonStorage.class, e);
+                }
+
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(file.getParent(), file.getFileName().toString() + ".*.bak")) {
+                    List<Path> backups = new ArrayList<>();
+                    for (Path path : directoryStream) {
+                        backups.add(path);
+                    }
+                    if (backups.size() > 1) {
+                        backups.sort((a, b) -> {
+                            try {
+                                FileTime timeA = Files.getLastModifiedTime(a);
+                                FileTime timeB = Files.getLastModifiedTime(b);
+                                return timeA.compareTo(timeB);
+                            } catch (IOException ex) {
+                                return 0;
+                            }
+                        });
+                        for (int i = 1; i < backups.size(); i++) {
+                            try {
+                                Files.deleteIfExists(backups.get(i));
+                            } catch (IOException ex) {
+                                Log.warn("Failed to delete old backup file: " + backups.get(i), JsonStorage.class, ex);
+                            }
+                        }
+                    }
+                } catch (IOException ex) {
+                    Log.warn("Failed to prune backup files", JsonStorage.class, ex);
                 }
             }
 

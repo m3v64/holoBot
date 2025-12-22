@@ -1,4 +1,5 @@
 bin/
 data/*.json
 data/*.xml
+data/*.bak
 .vscode

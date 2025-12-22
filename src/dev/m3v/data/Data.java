@@ -1,6 +1,7 @@
 package dev.m3v.data;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import dev.m3v.data.model.*;
 
@@ -13,6 +14,24 @@ public class Data {
     private List<Channel> channels;
     private List<Media> memory;
     private List<Media> liveStreams;
+
+    public Data() {
+        this(1.0,
+             new Secrets("", ""),
+             new ConfigOptions("INFO", "", 60, new ChannelSettings(5, 25), "", "", "", "", ""),
+             new ArrayList<Channel>(),
+             new ArrayList<Media>(),
+             new ArrayList<Media>());
+    }
+
+    public Data(double version, Secrets secrets, ConfigOptions configOptions, List<Channel> channels, List<Media> memory, List<Media> liveStreams) {
+        this.version = version;
+        this.secrets = secrets;
+        this.configOptions = configOptions;
+        this.channels = channels;
+        this.memory = memory;
+        this.liveStreams = liveStreams;
+    }
 
     public Channel getChannel(String channelId) {
         return channels.stream()

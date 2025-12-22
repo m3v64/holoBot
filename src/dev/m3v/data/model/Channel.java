@@ -5,9 +5,9 @@ public class Channel {
     private int checkQue;
     private int checkCooldown;
     private String roleId;
-    private channelSettings settings;
+    private ChannelSettings settings;
     
-    public Channel(String channelId, int checkQue, int checkCooldown, String roleId, channelSettings settings) {
+    public Channel(String channelId, int checkQue, int checkCooldown, String roleId, ChannelSettings settings) {
         this.channelId = channelId;
         this.checkQue = checkQue;
         this.checkCooldown = checkCooldown;
@@ -47,11 +47,11 @@ public class Channel {
         this.roleId = roleId;
     }
 
-    public channelSettings getSettings() {
+    public ChannelSettings getSettings() {
         return settings;
     }
 
-    public void setSettings(channelSettings settings) {
+    public void setSettings(ChannelSettings settings) {
         this.settings = settings;
     }
 }
