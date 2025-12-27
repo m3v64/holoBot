@@ -119,14 +119,16 @@ public class Bot {
         } else {
             Log.info("Error reported in {}: {}", Bot.class, location, errorMessage);
         }
+
         String error;
-        if (errorMessage == null) {
+        if (errorMessage == null && t != null) {
             StringWriter stringWriter = new StringWriter();
             t.printStackTrace(new PrintWriter(stringWriter));
             error = stringWriter.toString();
         } else {
             error = errorMessage;
         }
+        
         EmbedBuilder errorEmbed = EmbedTemplates.createErrorEmbed(location, error);
         String discordChannelId = JsonStorage.get().getConfigOptions().getPremierChannelId();
         if (discordChannelId == null) return;
